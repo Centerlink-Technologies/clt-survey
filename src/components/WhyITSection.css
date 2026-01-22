@@ -1,0 +1,67 @@
+.why-it {
+  background-color: var(--color-gray-light);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+}
+
+.why-it-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.why-it h2 {
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  margin-top: 0;
+}
+
+.section-intro {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.reasons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.reason-card {
+  background-color: var(--color-white);
+  padding: var(--spacing-lg);
+  border-radius: 8px;
+  border-left: 4px solid var(--color-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all var(--transition-normal);
+}
+
+.reason-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.reason-card h3 {
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+  margin-top: 0;
+}
+
+.reason-card p {
+  color: var(--color-gray);
+  line-height: 1.8;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .why-it {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .reasons-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .reason-card {
+    padding: var(--spacing-md);
+  }
+}
