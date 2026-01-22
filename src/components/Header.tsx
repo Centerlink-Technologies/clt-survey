@@ -1,14 +1,38 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Header.css'
 
 export default function Header() {
-  const scrollToForm = () => {
+  const navigate = useNavigate()
+
+  const handleWhyITClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    navigate('/clt-survey/')
     setTimeout(() => {
+      const whyItSection = document.querySelector('#why-it')
+      if (whyItSection) {
+        whyItSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }, 100)
+  }
+
+  const scrollToForm = () => {
+    // If we're not on home page, navigate there first
+    const currentPath = window.location.pathname
+    if (!currentPath.includes('clt-survey/') || currentPath.endsWith('case-studies')) {
+      navigate('/clt-survey/')
+      setTimeout(() => {
+        const formElement = document.querySelector('.healthcheck-form')
+        if (formElement) {
+          formElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 100)
+    } else {
+      // Already on home page, just scroll
       const formElement = document.querySelector('.healthcheck-form')
       if (formElement) {
         formElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
-    }, 0)
+    }
   }
 
   return (
@@ -24,7 +48,7 @@ export default function Header() {
 
       <nav className="header-nav">
           <Link to="/clt-survey/" className="nav-link">Home</Link>
-          <a href="#why-it" className="nav-link">Why IT Matters</a>
+          <a href="#why-it" className="nav-link" onClick={handleWhyITClick}>Why IT Matters</a>
           <button 
             className="nav-button"
             onClick={scrollToForm}
