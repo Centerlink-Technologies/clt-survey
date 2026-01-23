@@ -1,105 +1,143 @@
 .casestudies-tab {
-  padding: var(--spacing-2xl) var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-md);
   background-color: var(--color-white);
   flex-grow: 1;
 }
 
 .casestudies-container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
-.casestudies-tab h2 {
-  text-align: center;
-  margin-bottom: var(--spacing-md);
+.case-studies-section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.case-studies-section > h2 {
   color: var(--color-primary);
-}
-
-.casestudies-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: var(--spacing-lg);
-  margin-top: var(--spacing-2xl);
-}
-
-.case-study-card {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all var(--transition-normal);
-}
-
-.case-study-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-}
-
-.card-header {
-  background-color: var(--color-primary-light);
+  font-size: var(--font-size-2xl);
+  margin: 0 0 var(--spacing-xl) 0;
+  padding-bottom: var(--spacing-md);
   border-bottom: 2px solid var(--color-primary);
-  padding: var(--spacing-lg);
 }
 
-.card-header h3 {
-  color: var(--color-primary);
-  margin-top: 0;
-  margin-bottom: var(--spacing-sm);
-}
-
-.card-header .industry {
-  color: var(--color-gray);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
-}
-
-.card-section {
-  padding: var(--spacing-lg);
+.case-study {
+  margin-bottom: var(--spacing-2xl);
+  padding-bottom: var(--spacing-2xl);
   border-bottom: 1px solid var(--color-border);
 }
 
-.card-section:last-child {
+.case-study:last-child {
   border-bottom: none;
 }
 
-.card-section h4 {
-  color: var(--color-dark);
-  margin-top: 0;
-  margin-bottom: var(--spacing-sm);
+.case-study h3 {
+  color: var(--color-primary);
+  font-size: var(--font-size-lg);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.case-study .industry {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--spacing-md) 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+.study-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.study-part {
+  display: flex;
+  flex-direction: column;
+}
+
+.study-part h4 {
+  color: var(--color-primary);
+  font-size: var(--font-size-md);
+  margin: 0 0 var(--spacing-xs) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.study-part p {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.study-part .result {
+  color: var(--color-success);
+  font-weight: 500;
   font-size: var(--font-size-base);
 }
 
-.card-section p {
-  margin: 0;
-  color: var(--color-gray);
-  line-height: 1.8;
-  font-size: var(--font-size-sm);
+.testimonials-section {
+  margin-top: var(--spacing-2xl);
 }
 
-.result {
-  font-weight: 600;
-  color: var(--color-success);
+.testimonials-section > h2 {
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+  margin: 0 0 var(--spacing-xl) 0;
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.testimonial {
+  background-color: var(--color-background);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 4px;
+}
+
+.testimonial:last-child {
+  margin-bottom: 0;
+}
+
+.testimonial .quote {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+  margin: 0 0 var(--spacing-md) 0;
+  font-style: italic;
+}
+
+.testimonial .attribution {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {
   .casestudies-tab {
-    padding: var(--spacing-xl) var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-sm);
   }
 
-  .casestudies-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-md);
+  .casestudies-container {
+    max-width: 100%;
   }
 
-  .card-header {
-    padding: var(--spacing-md);
+  .case-study {
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
   }
 
-  .card-section {
+  .case-studies-section > h2,
+  .testimonials-section > h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .testimonial {
     padding: var(--spacing-md);
   }
 }

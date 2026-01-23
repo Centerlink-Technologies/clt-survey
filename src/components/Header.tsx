@@ -56,7 +56,7 @@ export default function Header() {
             IT Health Check
           </button>
           <Link to="/clt-survey/case-studies" className="nav-button">
-            Case Studies
+            Case Studies & Testimonials
           </Link>
         </nav>
     </header>

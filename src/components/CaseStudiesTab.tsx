@@ -9,6 +9,14 @@ interface CaseStudy {
   result: string
 }
 
+interface Testimonial {
+  id: number
+  quote: string
+  author: string
+  title: string
+  company: string
+}
+
 export default function CaseStudiesTab() {
   const caseStudies: CaseStudy[] = [
     {
@@ -37,35 +45,65 @@ export default function CaseStudiesTab() {
     }
   ]
 
+  const testimonials: Testimonial[] = [
+    {
+      id: 1,
+      quote: "Centerlink's team understood our manufacturing challenges immediately. They designed a solution that fit our exact needs and was able to scale as we grew.",
+      author: 'John Smith',
+      title: 'Operations Director',
+      company: 'Regional Materials Supplier'
+    },
+    {
+      id: 2,
+      quote: "We went from struggling with downtime to having systems we can rely on. Their support has been responsive and knowledgeable.",
+      author: 'Sarah Johnson',
+      title: 'IT Manager',
+      company: 'Acme Manufacturing Corp'
+    },
+    {
+      id: 3,
+      quote: "The investment in their security solutions has paid for itself many times over. Peace of mind is invaluable in manufacturing.",
+      author: 'Mike Torres',
+      title: 'Plant Manager',
+      company: 'Quality Fabrication LLC'
+    }
+  ]
+
   return (
     <section className="casestudies-tab">
       <div className="casestudies-container">
-        <h2>Manufacturing Case Studies</h2>
-        <p className="section-intro">
-          See how we've helped manufacturers in Northeast Ohio transform their operations with strategic IT solutions.
-        </p>
+        <div className="testimonials-section">
+          <h2>What Our Clients Say</h2>
+          {testimonials.map(testimonial => (
+            <div key={testimonial.id} className="testimonial">
+              <p className="quote">"{testimonial.quote}"</p>
+              <p className="attribution">— {testimonial.author}, {testimonial.title}<br />{testimonial.company}</p>
+            </div>
+          ))}
+        </div>
 
-        <div className="casestudies-grid">
+        <div className="case-studies-section">
+          <h2>Case Studies</h2>
           {caseStudies.map(study => (
-            <div key={study.id} className="case-study-card">
-              <div className="card-header">
-                <h3>{study.company}</h3>
-                <p className="industry">{study.industry}</p>
-              </div>
+            <div key={study.id} className="case-study">
+              <h3>{study.company}</h3>
+              <p className="industry">{study.industry}</p>
+              
+              <div className="study-content">
+                <div className="study-part">
+                  <h4>Challenge</h4>
+                  <p>{study.challenge}</p>
+                </div>
 
-              <div className="card-section">
-                <h4>Challenge</h4>
-                <p>{study.challenge}</p>
-              </div>
+                <div className="study-part">
+                  <h4>Solution</h4>
+                  <p>{study.solution}</p>
+                </div>
 
-              <div className="card-section">
-                <h4>Solution</h4>
-                <p>{study.solution}</p>
-              </div>
-
-              <div className="card-section">
-                <h4>Result</h4>
-                <p className="result">{study.result}</p>
+                <div className="study-part">
+                  <h4>Result</h4>
+                  <p className="result">{study.result}</p>
+                </div>
               </div>
             </div>
           ))}

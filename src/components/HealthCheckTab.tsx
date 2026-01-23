@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './HealthCheckTab.css'
+import { generateHealthCheckPDF } from '../utils/generatePDF'
 
 interface FormData {
   companyName: string
@@ -90,6 +91,14 @@ export default function HealthCheckTab() {
       const result = await response.json()
 
       if (response.ok) {
+        // Generate and download PDF
+        try {
+          await generateHealthCheckPDF(formData)
+        } catch (pdfError) {
+          console.error('PDF generation error:', pdfError)
+          // Don't fail the form submission if PDF generation fails
+        }
+
         setSubmitted(true)
         // Reset form after 4 seconds
         setTimeout(() => {
@@ -132,7 +141,7 @@ export default function HealthCheckTab() {
         {submitted ? (
           <div className="success-message">
             <h3>✓ Assessment Complete</h3>
-            <p>Thank you! We've received your IT health check and will analyze your responses. Our team will contact you within 24 hours with personalized recommendations and next steps.</p>
+            <p>Thank you! We've received your IT health check and a detailed PDF report has been automatically generated and downloaded. Our team will review your responses and contact you within 24 hours with personalized recommendations and next steps.</p>
           </div>
         ) : (
           <form className="healthcheck-form" onSubmit={handleSubmit}>

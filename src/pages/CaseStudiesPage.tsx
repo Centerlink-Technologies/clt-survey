@@ -5,8 +5,8 @@ export default function CaseStudiesPage() {
   return (
     <main className="casestudies-page">
       <div className="casestudies-page-header">
-        <h1>Manufacturing Case Studies</h1>
-        <p>See how we've helped manufacturers in Northeast Ohio transform their operations with strategic IT solutions.</p>
+        <h1>Case Studies & Testimonials</h1>
+        <p>Learn how we've helped manufacturers succeed</p>
       </div>
       <CaseStudiesTab />
     </main>
