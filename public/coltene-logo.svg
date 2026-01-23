@@ -1,0 +1,9 @@
+<svg viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
+  <!-- Coltene blue lines -->
+  <rect x="20" y="40" width="12" height="70" fill="#0066CC"/>
+  <rect x="40" y="30" width="12" height="80" fill="#0066CC"/>
+  <rect x="60" y="50" width="12" height="60" fill="#0066CC"/>
+  
+  <!-- COLTENE text -->
+  <text x="95" y="115" font-family="Arial, sans-serif" font-size="68" font-weight="bold" fill="#000000" letter-spacing="2">COLTENE</text>
+</svg>

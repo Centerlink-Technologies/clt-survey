@@ -118,6 +118,18 @@
   font-weight: 500;
 }
 
+.testimonial-logo {
+  margin-top: var(--spacing-md);
+  max-width: 200px;
+  height: auto;
+}
+
+.testimonial-logo img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 @media (max-width: 768px) {
   .casestudies-tab {
     padding: var(--spacing-md) var(--spacing-sm);

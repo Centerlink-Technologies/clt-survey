@@ -38,7 +38,7 @@ export default function HeroSection() {
       <div className="hero-content">
         <h2>Your Manufacturing Operations Deserve World-Class IT Support</h2>
         <p>We help manufacturers in Akron, Canton, Cleveland, and Northeast Ohio optimize their operations through strategic technology solutions.</p>
-        <button className="cta-button" onClick={handleGetStarted}>Get Started Today</button>
+        <button className="cta-button" onClick={handleGetStarted}>Start Your IT Health Check Here</button>
       </div>
       <div className="carousel-indicators">
         {carouselImages.map((_, index) => (

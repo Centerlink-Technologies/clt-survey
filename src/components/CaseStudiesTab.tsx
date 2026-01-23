@@ -21,11 +21,11 @@ export default function CaseStudiesTab() {
   const caseStudies: CaseStudy[] = [
     {
       id: 1,
-      company: 'Acme Manufacturing Corp',
-      industry: 'Automotive Parts',
-      challenge: 'Legacy systems causing 15% downtime annually, compliance gaps in data security',
-      solution: 'Implemented modern ERP system with cloud backup and automated compliance monitoring',
-      result: 'Reduced downtime to 2%, achieved SOC 2 compliance, improved inventory accuracy by 95%'
+      company: 'North American Material Supplier',
+      industry: 'Industrial Materials & Distribution',
+      challenge: 'Required high-availability network infrastructure across 12 locations spanning the US and Mexico with strict SLA requirements for minimal downtime. Existing firewalls presented single points of failure.',
+      solution: 'Upgraded firewalls to highly available configurations across all 12 North American locations. Implemented redundant firewall pairs with automatic failover to ensure continuous network protection and connectivity.',
+      result: 'Achieved near-zero downtime for network infrastructure across all locations. Met stringent SLA requirements with 99.9% uptime. Eliminated single points of failure in their firewall infrastructure.'
     },
     {
       id: 2,
@@ -48,10 +48,10 @@ export default function CaseStudiesTab() {
   const testimonials: Testimonial[] = [
     {
       id: 1,
-      quote: "Centerlink's team understood our manufacturing challenges immediately. They designed a solution that fit our exact needs and was able to scale as we grew.",
-      author: 'John Smith',
-      title: 'Operations Director',
-      company: 'Regional Materials Supplier'
+      quote: "We've partnered with Centerlink on several projects, and they consistently go above and beyond. Our primary contact, Mike, is fantastic - always engaging and looking for proactive ways to save us money. They recently overhauled our aging infrastructure and modernized our telecommunications. By replacing the analog lines for our alarms, elevator, and essential services, they didn't just improve our systems - they saved us a significant amount of money. Every tech we've dealt with has been knowledgeable and quick to help. I can't recommend them enough for any of your IT needs.",
+      author: 'Bryan Lindsey',
+      title: 'Manager of Information Systems & Technology',
+      company: 'Manufacturing & Services'
     },
     {
       id: 2,
@@ -62,10 +62,10 @@ export default function CaseStudiesTab() {
     },
     {
       id: 3,
-      quote: "The investment in their security solutions has paid for itself many times over. Peace of mind is invaluable in manufacturing.",
-      author: 'Mike Torres',
-      title: 'Plant Manager',
-      company: 'Quality Fabrication LLC'
+      quote: "As Executive Director of First Tee - Greater Akron, I'm always looking for partners who understand the importance of efficiency and reliability, especially when it comes to technology that supports our mission of impacting young lives. Centerlink Technologies exceeded our expectations when we recently purchased new laptops through them. From start to finish, they made the process incredibly easy. Their team was refreshingly open and honest about options, pricing, and timelines - no surprises, just straightforward communication. What impressed me most was how quickly they delivered on their commitments, getting our team up and running without missing a beat. In the nonprofit world, we need partners who value our time and resources as much as we do. Centerlink Technologies proved to be exactly that kind of partner. I wouldn't hesitate to recommend them to other organizations looking for reliable technology solutions and outstanding service.",
+      author: 'Jeff O\'Brien',
+      title: 'Executive Director',
+      company: 'First Tee – Greater Akron'
     }
   ]
 
@@ -78,6 +78,16 @@ export default function CaseStudiesTab() {
             <div key={testimonial.id} className="testimonial">
               <p className="quote">"{testimonial.quote}"</p>
               <p className="attribution">— {testimonial.author}, {testimonial.title}<br />{testimonial.company}</p>
+              {testimonial.id === 1 && (
+                <div className="testimonial-logo">
+                  <img src="/clt-survey/coltene-logo.svg" alt="Coltene" />
+                </div>
+              )}
+              {testimonial.id === 3 && (
+                <div className="testimonial-logo">
+                  <img src="/clt-survey/first-tee-logo.svg" alt="First Tee Greater Akron" />
+                </div>
+              )}
             </div>
           ))}
         </div>
