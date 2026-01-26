@@ -4,6 +4,14 @@ import './Header.css'
 export default function Header() {
   const navigate = useNavigate()
 
+  const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    navigate('/clt-survey/')
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 100)
+  }
+
   const handleWhyITClick = (e: React.MouseEvent) => {
     e.preventDefault()
     navigate('/clt-survey/')
@@ -47,7 +55,7 @@ export default function Header() {
       </div>
 
       <nav className="header-nav">
-          <Link to="/clt-survey/" className="nav-link">Home</Link>
+          <a href="#" className="nav-link" onClick={handleHomeClick}>Home</a>
           <a href="#why-it" className="nav-link" onClick={handleWhyITClick}>Why IT Matters</a>
           <button 
             className="nav-button"
