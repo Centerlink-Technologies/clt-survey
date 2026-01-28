@@ -25,7 +25,7 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
   container.style.left = '-9999px'
   container.style.width = '1000px'
   container.style.backgroundColor = 'white'
-  container.style.padding = '40px'
+  container.style.padding = '25px'
   container.style.fontFamily = 'Arial, sans-serif'
 
   // Calculate health scores
@@ -38,15 +38,18 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
   const html = `
     <div style="font-family: Arial, sans-serif; color: #333;">
       <!-- Header -->
-      <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #0052cc;">
-        <h1 style="color: #0052cc; margin: 0; font-size: 28px;">Manufacturing IT Health Check Report</h1>
-        <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Centerlink Technologies</p>
+      <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #0052cc;">
+        <img src="/clt-survey/centerlink-logo.svg" alt="Centerlink Technologies" style="height: 50px; width: auto;">
+        <div>
+          <h1 style="color: #0052cc; margin: 0; font-size: 24px;">Manufacturing IT Health Check Report</h1>
+          <p style="color: #666; margin: 3px 0 0 0; font-size: 12px;">Centerlink Technologies</p>
+        </div>
       </div>
 
       <!-- Company Info -->
-      <div style="margin-bottom: 30px;">
-        <h2 style="color: #0052cc; font-size: 18px; margin: 0 0 15px 0; border-bottom: 2px solid #0052cc; padding-bottom: 10px;">Company Information</h2>
-        <table style="width: 100%; font-size: 14px;">
+      <div style="margin-bottom: 20px;">
+        <h2 style="color: #0052cc; font-size: 16px; margin: 0 0 10px 0; border-bottom: 2px solid #0052cc; padding-bottom: 8px;">Company Information</h2>
+        <table style="width: 100%; font-size: 12px;">
           <tr style="background-color: #f5f5f5;">
             <td style="padding: 8px; font-weight: bold; width: 25%;">Company:</td>
             <td style="padding: 8px;">${escapeHtml(formData.companyName)}</td>
@@ -63,8 +66,8 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
       </div>
 
       <!-- Health Scores -->
-      <div style="margin-bottom: 30px;">
-        <h2 style="color: #0052cc; font-size: 18px; margin: 0 0 15px 0; border-bottom: 2px solid #0052cc; padding-bottom: 10px;">IT Health Assessment Scores</h2>
+      <div style="margin-bottom: 20px;">
+        <h2 style="color: #0052cc; font-size: 16px; margin: 0 0 10px 0; border-bottom: 2px solid #0052cc; padding-bottom: 8px;">IT Health Assessment Scores</h2>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
           <!-- Overall Health Meter -->
@@ -110,9 +113,9 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
       </div>
 
       <!-- Critical Systems -->
-      <div style="margin-bottom: 30px;">
-        <h2 style="color: #0052cc; font-size: 18px; margin: 0 0 15px 0; border-bottom: 2px solid #0052cc; padding-bottom: 10px;">Critical Systems</h2>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+      <div style="margin-bottom: 20px;">
+        <h2 style="color: #0052cc; font-size: 16px; margin: 0 0 10px 0; border-bottom: 2px solid #0052cc; padding-bottom: 8px;">Critical Systems</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;">
           ${formData.criticalSystems.length > 0 
             ? formData.criticalSystems.map(system => 
               `<div style="padding: 8px; background-color: #f0f7ff; border-left: 3px solid #0052cc; border-radius: 4px;">✓ ${escapeHtml(system)}</div>`
@@ -123,9 +126,9 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
       </div>
 
       <!-- Assessment Details -->
-      <div style="margin-bottom: 30px;">
-        <h2 style="color: #0052cc; font-size: 18px; margin: 0 0 15px 0; border-bottom: 2px solid #0052cc; padding-bottom: 10px;">Assessment Details</h2>
-        <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+      <div style="margin-bottom: 20px;">
+        <h2 style="color: #0052cc; font-size: 16px; margin: 0 0 10px 0; border-bottom: 2px solid #0052cc; padding-bottom: 8px;">Assessment Details</h2>
+        <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
           <tr style="background-color: #f5f5f5;">
             <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Production Visibility:</td>
             <td style="padding: 10px; border: 1px solid #ddd;">${escapeHtml(formData.productionVisibility)}</td>
@@ -146,9 +149,9 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
       </div>
 
       <!-- Next Steps -->
-      <div style="background-color: #f0f7ff; border-left: 4px solid #0052cc; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-        <h3 style="color: #0052cc; margin: 0 0 10px 0; font-size: 16px;">Next Steps</h3>
-        <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6;">
+      <div style="background-color: #f0f7ff; border-left: 4px solid #0052cc; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+        <h3 style="color: #0052cc; margin: 0 0 8px 0; font-size: 14px;">Next Steps</h3>
+        <ul style="margin: 0; padding-left: 20px; font-size: 11px; line-height: 1.5;">
           <li>Our IT specialists will review your assessment within 24 hours</li>
           <li>We'll contact you to discuss findings and recommendations</li>
           <li>We'll provide a customized implementation plan if you choose to move forward</li>
@@ -157,9 +160,9 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
       </div>
 
       <!-- Footer -->
-      <div style="text-align: center; padding-top: 20px; border-top: 1px solid #ccc; font-size: 12px; color: #999;">
+      <div style="text-align: center; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #999;">
         <p style="margin: 0;">Centerlink Technologies | Northeast Ohio Manufacturing IT Solutions Provider</p>
-        <p style="margin: 5px 0 0 0;">© 2026 Centerlink Technologies. All rights reserved.</p>
+        <p style="margin: 3px 0 0 0;">© 2026 Centerlink Technologies. All rights reserved.</p>
       </div>
     </div>
   `
@@ -175,7 +178,7 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
       useCORS: true,
     })
 
-    // Create PDF
+    // Create PDF with single page
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -186,19 +189,8 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
     const imgWidth = 210 // A4 width in mm
     const imgHeight = (canvas.height * imgWidth) / canvas.width
     
-    let heightLeft = imgHeight
-    let position = 0
-
-    // Add pages as needed
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-    heightLeft -= 297 // A4 height in mm
-
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight
-      pdf.addPage()
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-      heightLeft -= 297
-    }
+    // Add single page (no multi-page logic)
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight)
 
     // Download PDF
     pdf.save(`IT_Health_Check_Report_${formData.companyName}_${new Date().getTime()}.pdf`)
