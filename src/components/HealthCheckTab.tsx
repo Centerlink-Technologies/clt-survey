@@ -3,6 +3,7 @@ import './HealthCheckTab.css'
 import { generateHealthCheckPDF } from '../utils/generatePDF'
 
 interface FormData {
+  name: string
   companyName: string
   email: string
   phone: string
@@ -21,6 +22,7 @@ interface FormData {
 
 export default function HealthCheckTab() {
   const [formData, setFormData] = useState<FormData>({
+    name: '',
     companyName: '',
     email: '',
     phone: '',
@@ -62,6 +64,7 @@ export default function HealthCheckTab() {
     try {
       // Prepare data as JSON
       const dataToSend = {
+        'name': formData.name,
         'company_name': formData.companyName,
         'email': formData.email,
         'phone': formData.phone,
@@ -103,6 +106,7 @@ export default function HealthCheckTab() {
         // Reset form after 4 seconds
         setTimeout(() => {
           setFormData({
+            name: '',
             companyName: '',
             email: '',
             phone: '',
@@ -133,7 +137,7 @@ export default function HealthCheckTab() {
   return (
     <section className="healthcheck-tab">
       <div className="healthcheck-container">
-        <h2>Manufacturing IT Health Check</h2>
+        <h2>Cyber Security Assessment</h2>
         <p className="section-intro">
           This 2-minute assessment helps us understand your current IT environment, challenges, and goals. We'll use this to recommend tailored solutions.
         </p>
@@ -149,31 +153,40 @@ export default function HealthCheckTab() {
             <div className="form-section-title">Company & Contact Information</div>
             
             <div className="form-group">
-              <label htmlFor="companyName">Company Name *</label>
+              <label htmlFor="name"><strong>Name</strong></label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="companyName"><strong>Company Name</strong></label>
               <input
                 type="text"
                 id="companyName"
                 name="companyName"
                 value={formData.companyName}
                 onChange={handleChange}
-                required
               />
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="email">Email Address *</label>
+                <label htmlFor="email"><strong>Email Address</strong></label>
                 <input
                   type="email"
                   id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  required
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="phone">Phone Number</label>
+                <label htmlFor="phone"><strong>Phone Number</strong></label>
                 <input
                   type="tel"
                   id="phone"
@@ -185,13 +198,12 @@ export default function HealthCheckTab() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="employees">Number of Employees *</label>
+              <label htmlFor="employees"><strong>Number of Employees</strong></label>
               <select
                 id="employees"
                 name="employees"
                 value={formData.employees}
                 onChange={handleChange}
-                required
               >
                 <option value="">Select...</option>
                 <option value="10-50">10-50</option>
@@ -205,13 +217,12 @@ export default function HealthCheckTab() {
             <div className="form-section-title">Current IT Infrastructure</div>
 
             <div className="form-group">
-              <label htmlFor="yearsWithCurrentSystem">How old are your primary business systems? *</label>
+              <label htmlFor="yearsWithCurrentSystem"><strong>How old are your primary business systems?</strong></label>
               <select
                 id="yearsWithCurrentSystem"
                 name="yearsWithCurrentSystem"
                 value={formData.yearsWithCurrentSystem}
                 onChange={handleChange}
-                required
               >
                 <option value="">Select...</option>
                 <option value="0-2">0-2 years (Modern)</option>
@@ -222,13 +233,12 @@ export default function HealthCheckTab() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="downtime">Estimated unplanned downtime per month *</label>
+              <label htmlFor="downtime"><strong>Estimated unplanned downtime per month</strong></label>
               <select
                 id="downtime"
                 name="downtime"
                 value={formData.downtime}
                 onChange={handleChange}
-                required
               >
                 <option value="">Select...</option>
                 <option value="none">None or minimal (&lt;2 hours)</option>
@@ -240,7 +250,7 @@ export default function HealthCheckTab() {
 
             {/* Critical Systems */}
             <div className="form-group">
-              <label>Which systems are critical to your daily operations? (Select all that apply)</label>
+              <label><strong>Which systems are critical to your daily operations? (Select all that apply)</strong></label>
               <div className="checkbox-group">
                 {['ERP/Manufacturing System', 'Production Control', 'Inventory Management', 'Quality Control', 'Supply Chain Tracking', 'Customer/Order Management'].map(system => (
                   <label key={system} className="checkbox-label">
@@ -259,7 +269,7 @@ export default function HealthCheckTab() {
             <div className="form-section-title">Security & Compliance</div>
 
             <div className="form-group">
-              <label>Security & data concerns facing your operation (Select all that apply)</label>
+              <label><strong>Security & data concerns facing your operation (Select all that apply)</strong></label>
               <div className="checkbox-group">
                 {['Cyber attacks/ransomware', 'Data breaches', 'Lack of backup/disaster recovery', 'Employee access control', 'Regulatory compliance (HIPAA, ISO, etc.)', 'Product security/IP protection'].map(concern => (
                   <label key={concern} className="checkbox-label">
@@ -275,7 +285,7 @@ export default function HealthCheckTab() {
             </div>
 
             <div className="form-group">
-              <label>Do you have compliance requirements? (Select all that apply)</label>
+              <label><strong>Do you have compliance requirements? (Select all that apply)</strong></label>
               <div className="checkbox-group">
                 {['ISO certifications', 'FDA regulations', 'OSHA compliance', 'Data privacy (GDPR, CCPA)', 'Industry standards', 'No specific requirements'].map(comp => (
                   <label key={comp} className="checkbox-label">
@@ -294,13 +304,12 @@ export default function HealthCheckTab() {
             <div className="form-section-title">Operations & Visibility</div>
 
             <div className="form-group">
-              <label htmlFor="productionVisibility">How well can you track real-time production metrics? *</label>
+              <label htmlFor="productionVisibility"><strong>How well can you track real-time production metrics?</strong></label>
               <select
                 id="productionVisibility"
                 name="productionVisibility"
                 value={formData.productionVisibility}
                 onChange={handleChange}
-                required
               >
                 <option value="">Select...</option>
                 <option value="manual">Manual tracking (spreadsheets, paper)</option>
@@ -311,13 +320,12 @@ export default function HealthCheckTab() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="integrationNeeds">How integrated are your manufacturing systems? *</label>
+              <label htmlFor="integrationNeeds"><strong>How integrated are your manufacturing systems?</strong></label>
               <select
                 id="integrationNeeds"
                 name="integrationNeeds"
                 value={formData.integrationNeeds}
                 onChange={handleChange}
-                required
               >
                 <option value="">Select...</option>
                 <option value="siloed">Siloed (systems don't communicate)</option>
@@ -331,7 +339,7 @@ export default function HealthCheckTab() {
             <div className="form-section-title">Business Priorities</div>
 
             <div className="form-group">
-              <label htmlFor="mainPainPoints">What's your #1 IT pain point right now? *</label>
+              <label htmlFor="mainPainPoints"><strong>What's your #1 IT pain point right now?</strong></label>
               <textarea
                 id="mainPainPoints"
                 name="mainPainPoints"
@@ -339,18 +347,16 @@ export default function HealthCheckTab() {
                 onChange={handleChange}
                 rows={3}
                 placeholder="e.g., Systems going down too often, can't see production in real-time, security concerns..."
-                required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="timeline">When would you like to address IT challenges? *</label>
+              <label htmlFor="timeline"><strong>When would you like to address IT challenges?</strong></label>
               <select
                 id="timeline"
                 name="timeline"
                 value={formData.timeline}
                 onChange={handleChange}
-                required
               >
                 <option value="">Select...</option>
                 <option value="immediate">Immediate (critical issue)</option>
@@ -361,7 +367,7 @@ export default function HealthCheckTab() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="additionalNotes">Any additional context or concerns?</label>
+              <label htmlFor="additionalNotes"><strong>Any additional context or concerns?</strong></label>
               <textarea
                 id="additionalNotes"
                 name="additionalNotes"

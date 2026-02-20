@@ -41,7 +41,7 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
       <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #0052cc;">
         <img src="/clt-survey/centerlink-logo.svg" alt="Centerlink Technologies" style="height: 50px; width: auto;">
         <div>
-          <h1 style="color: #0052cc; margin: 0; font-size: 24px;">Manufacturing IT Health Check Report</h1>
+          <h1 style="color: #0052cc; margin: 0; font-size: 24px;">Cyber Security Assessment Report</h1>
           <p style="color: #666; margin: 3px 0 0 0; font-size: 12px;">Centerlink Technologies</p>
         </div>
       </div>
