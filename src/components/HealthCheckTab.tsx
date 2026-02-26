@@ -61,23 +61,12 @@ export default function HealthCheckTab() {
   const [showScheduleOverlay, setShowScheduleOverlay] = useState(false)
   const [assessmentDate, setAssessmentDate] = useState('')
   const [assessmentTime, setAssessmentTime] = useState('')
-  const [showBookingPrompt, setShowBookingPrompt] = useState(false)
-  const [showBookingLink, setShowBookingLink] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
       [name]: value
-    }))
-  }
-
-  const handleCheckboxChange = (name: string, value: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: checked
-        ? [...(prev[name as keyof FormData] as string[]), value]
-        : (prev[name as keyof FormData] as string[]).filter(item => item !== value)
     }))
   }
 
@@ -182,8 +171,8 @@ export default function HealthCheckTab() {
               <h3>Assessment Submitted!</h3>
               <p>Would you like to book a free consultation based on your assessment responses?</p>
               <div style={{ display: 'flex', gap: '16px', marginTop: '16px' }}>
-                <button type="button" className="submit-button" onClick={() => { setShowBookingPrompt(false); setShowBookingLink(false); setSubmitted(false); }}>No, thank you</button>
-                <button type="button" className="submit-button" onClick={() => { setShowBookingPrompt(false); setShowBookingLink(true); }}>Yes, book now</button>
+                <button type="button" className="submit-button" onClick={() => setSubmitted(false)}>No, thank you</button>
+                <button type="button" className="submit-button" onClick={() => setSubmitted(false)}>Yes, book now</button>
               </div>
             </div>
           </div>
