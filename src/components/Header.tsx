@@ -13,17 +13,6 @@ export default function Header() {
     }, 100)
   }
 
-  const handleWhyITClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    navigate('/')
-    setTimeout(() => {
-      const whyItSection = document.querySelector('#why-it')
-      if (whyItSection) {
-        whyItSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    }, 100)
-  }
-
   const scrollToForm = () => {
     // If we're not on home page, navigate there first
     const currentPath = window.location.pathname
@@ -57,7 +46,6 @@ export default function Header() {
 
       <nav className="header-nav">
           <a href="#" className="nav-link" onClick={handleHomeClick}>Home</a>
-          <a href="#why-it" className="nav-link" onClick={handleWhyITClick}>Why IT Matters</a>
           <button 
             className="nav-button"
             onClick={scrollToForm}

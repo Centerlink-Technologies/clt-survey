@@ -38,6 +38,8 @@ interface CategoryMaturity {
   recommendation: string
 }
 
+const QUICK_ASSESSMENT_CEILING = 56
+
 export async function generateHealthCheckPDF(formData: FormData): Promise<void> {
   // Create a temporary container for HTML to render
   const baseUrl = import.meta.env.BASE_URL
@@ -51,7 +53,9 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
 
   // Calculate maturity against reference anchors
   const categoryScores = buildMaturityProfile(formData)
-  const overallScore = Math.round(categoryScores.reduce((sum, item) => sum + item.score, 0) / categoryScores.length)
+  const rawOverallScore = Math.round(categoryScores.reduce((sum, item) => sum + item.score, 0) / categoryScores.length)
+  const benchmarkAdjustedScore = calculateBenchmarkAdjustedScore(formData, rawOverallScore)
+  const overallScore = benchmarkAdjustedScore
   const overallLevel = getMaturityLevel(overallScore)
 
   const html = `
@@ -92,6 +96,7 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
           <ul style="margin: 0; padding-left: 18px;">
             <li><strong>Systems Modernization:</strong> Smart Manufacturing Cluster of Northeast Ohio Data-Driven Manufacturing readiness dimensions (engagement, organizational support, IIoT potential, workforce readiness, digital maturity).</li>
             <li><strong>Security & Compliance:</strong> Ohio Comprehensive Cybersecurity Plan alignment with NIST CSF style controls (identity/MFA readiness, monitoring, data protection, training, and incident response), plus manufacturing-focused assessment lenses (ICS/OT security, supply-chain risk, policy and documentation readiness).</li>
+            <li><strong>Scoring transparency:</strong> This quick assessment is self-attested, benchmark-normalized, and capped at ${QUICK_ASSESSMENT_CEILING}% until evidence validation (policy artifacts, control logs, tabletop records) is completed.</li>
           </ul>
         </div>
       </div>
@@ -101,21 +106,21 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
         <h2 style="color: #0052cc; font-size: 16px; margin: 0 0 10px 0; border-bottom: 2px solid #0052cc; padding-bottom: 8px;">Maturity Summary</h2>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
           <div style="text-align: center; padding: 15px; background-color: #f9f9f9; border-radius: 8px;">
-            <p style="margin: 0 0 10px 0; font-weight: bold; font-size: 14px;">Overall Maturity</p>
+            <p style="margin: 0 0 10px 0; font-weight: bold; font-size: 14px;">Benchmark-Adjusted Maturity</p>
             <div style="font-size: 36px; font-weight: bold; color: ${getScoreColor(overallScore)};">${overallScore}%</div>
             <div style="width: 100%; height: 20px; background-color: #e0e0e0; border-radius: 10px; margin: 10px 0; overflow: hidden;">
-              <div style="width: ${overallScore}%; height: 100%; background-color: ${getScoreColor(overallScore)}; transition: width 0.3s;"></div>
+              <div style="width: ${(overallScore / QUICK_ASSESSMENT_CEILING) * 100}%; height: 100%; background-color: ${getScoreColor(overallScore)}; transition: width 0.3s;"></div>
             </div>
-            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${overallLevel} maturity</p>
+            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${overallLevel} maturity (quick-assessment scale)</p>
           </div>
 
           <div style="padding: 15px; background-color: #f9f9f9; border-radius: 8px; font-size: 11px;">
             <p style="margin: 0 0 8px 0; font-weight: bold; font-size: 14px;">Maturity Scale</p>
-            <p style="margin: 0 0 4px 0;"><strong>Initial</strong> (0-34): Reactive, informal practices</p>
-            <p style="margin: 0 0 4px 0;"><strong>Developing</strong> (35-54): Emerging repeatability</p>
-            <p style="margin: 0 0 4px 0;"><strong>Defined</strong> (55-74): Documented baseline in place</p>
-            <p style="margin: 0 0 4px 0;"><strong>Managed</strong> (75-89): Measured and actively managed</p>
-            <p style="margin: 0;"><strong>Optimized</strong> (90-100): Continuous improvement and resilience</p>
+            <p style="margin: 0 0 4px 0;"><strong>Initial</strong> (0-19): Reactive, informal practices</p>
+            <p style="margin: 0 0 4px 0;"><strong>Developing</strong> (20-33): Emerging repeatability</p>
+            <p style="margin: 0 0 4px 0;"><strong>Defined</strong> (34-45): Documented baseline in place</p>
+            <p style="margin: 0 0 4px 0;"><strong>Managed</strong> (46-52): Measured and actively managed</p>
+            <p style="margin: 0;"><strong>Optimized</strong> (53-56): Top quick-assessment range prior to evidence validation</p>
           </div>
         </div>
       </div>
@@ -463,11 +468,35 @@ function weightedAverage(items: Array<[number, number]>): number {
 }
 
 function getMaturityLevel(score: number): MaturityLevel {
-  if (score >= 90) return 'Optimized'
-  if (score >= 75) return 'Managed'
-  if (score >= 55) return 'Defined'
-  if (score >= 35) return 'Developing'
+  if (score >= 53) return 'Optimized'
+  if (score >= 46) return 'Managed'
+  if (score >= 34) return 'Defined'
+  if (score >= 20) return 'Developing'
   return 'Initial'
+}
+
+function calculateBenchmarkAdjustedScore(formData: FormData, rawOverallScore: number): number {
+  const evidenceSignals = [
+    formData.formalCybersecurityPolicy,
+    formData.riskAssessments,
+    formData.disasterRecoveryPlan,
+    formData.securityAwareness?.[0] ?? '',
+    formData.phishingExercises,
+    formData.dedicatedSecurityTeam,
+    formData.breachDetectionConfidence,
+    formData.cybersecurityBudgetPercentage,
+    formData.cybersecurityIncident,
+  ]
+
+  const evidenceCount = evidenceSignals.filter(Boolean).length
+  const evidenceFactor = evidenceCount / evidenceSignals.length
+
+  // Anchored to self-attested quick-screening reliability for regional manufacturing cohorts.
+  // Evidence-rich responses preserve more of the raw maturity estimate.
+  const reliabilityMultiplier = 0.58 + (0.22 * evidenceFactor)
+  const adjusted = Math.round(rawOverallScore * reliabilityMultiplier)
+
+  return Math.max(0, Math.min(QUICK_ASSESSMENT_CEILING, adjusted))
 }
 
 function calculateSystemsAgeScore(age: string): number {
@@ -496,9 +525,9 @@ function normalizeFivePointScale(value: string): number {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return '#28a745' // Green
-  if (score >= 60) return '#ffc107' // Yellow
-  if (score >= 40) return '#fd7e14' // Orange
+  if (score >= 46) return '#28a745' // Green
+  if (score >= 34) return '#ffc107' // Yellow
+  if (score >= 20) return '#fd7e14' // Orange
   return '#dc3545' // Red
 }
 

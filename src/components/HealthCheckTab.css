@@ -15,6 +15,49 @@
   color: var(--color-primary);
 }
 
+.section-intro {
+  text-align: center;
+  color: var(--color-gray-dark);
+  margin: 0 auto var(--spacing-lg);
+  max-width: 720px;
+}
+
+.progress-panel {
+  background: linear-gradient(135deg, #eef5ff, #f8fbff);
+  border: 1px solid #d6e6ff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  color: var(--color-primary-dark);
+}
+
+.progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: #dae5f7;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0052cc, #1f7bff);
+  transition: width 0.25s ease;
+}
+
+.progress-panel p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--color-gray-dark);
+}
+
 .healthcheck-form {
   background-color: var(--color-gray-light);
   padding: var(--spacing-lg);
@@ -67,6 +110,12 @@
   font-family: var(--font-family);
   font-size: var(--font-size-base);
   transition: border-color var(--transition-fast);
+}
+
+.slider-caption {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--color-gray-dark);
 }
 
 .form-group input:focus,
@@ -200,6 +249,16 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.welcome-overlay-content {
+  max-width: 560px;
+  text-align: center;
+}
+
+.welcome-badge {
+  font-size: 44px;
+  line-height: 1;
 }
 .overlay-content h3 {
   margin-top: 0;

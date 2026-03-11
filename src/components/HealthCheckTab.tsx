@@ -29,6 +29,36 @@ interface FormData {
   cybersecurityBudgetPercentage: string
 }
 
+const REQUIRED_FIELDS: Array<keyof FormData> = [
+  'companyName',
+  'email',
+  'employees',
+  'yearsWithCurrentSystem',
+  'downtime',
+  'productionVisibility',
+  'integrationNeeds',
+  'formalCybersecurityPolicy',
+  'riskAssessments',
+  'disasterRecoveryPlan',
+  'timeline',
+]
+
+function getBudgetLabel(value: string): string {
+  const numeric = parseInt(value, 10)
+  if (Number.isNaN(numeric)) return 'Not selected'
+  if (numeric < 5) return 'Less than 5%'
+  if (numeric <= 10) return '5%–10%'
+  if (numeric <= 20) return '11%–20%'
+  return 'More than 20%'
+}
+
+function getMomentumMessage(progress: number): string {
+  if (progress >= 85) return 'Excellent momentum — you are almost done.'
+  if (progress >= 60) return 'Great progress — your score precision is improving.'
+  if (progress >= 35) return 'Nice start — each answer sharpens your recommendations.'
+  return 'Welcome — a few quick answers unlock your maturity report.'
+}
+
 export default function HealthCheckTab() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -59,8 +89,12 @@ export default function HealthCheckTab() {
 
   const [submitted, setSubmitted] = useState(false)
   const [showScheduleOverlay, setShowScheduleOverlay] = useState(false)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true)
   const [assessmentDate, setAssessmentDate] = useState('')
   const [assessmentTime, setAssessmentTime] = useState('')
+
+  const completedRequiredFields = REQUIRED_FIELDS.filter(field => formData[field]).length
+  const progressPercent = Math.round((completedRequiredFields / REQUIRED_FIELDS.length) * 100)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -159,11 +193,38 @@ export default function HealthCheckTab() {
 
   return (
     <section className="healthcheck-tab">
+      {showWelcomeModal && (
+        <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="assessment-modal-title">
+          <div className="overlay-content welcome-overlay-content">
+            <div className="welcome-badge" aria-hidden="true">🏭✅</div>
+            <h3 id="assessment-modal-title">Begin Your Assessment</h3>
+            <p>
+              You are taking a strong first step. Complete this interactive assessment to receive a
+              benchmarked maturity report aligned to manufacturing-focused practices used in Northeast Ohio.
+            </p>
+            <button type="button" className="submit-button" onClick={() => setShowWelcomeModal(false)}>
+              Start Assessment
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="healthcheck-container">
         <h2>Cybersecurity Assessment</h2>
         <p className="section-intro">
-          This 2-minute assessment helps us understand your current IT environment, challenges, and goals. We'll use this to recommend tailored solutions.
+          This interactive assessment estimates your maturity against regional manufacturing reference practices.
         </p>
+
+        <div className="progress-panel">
+          <div className="progress-header">
+            <strong>Assessment Progress</strong>
+            <span>{progressPercent}% complete</span>
+          </div>
+          <div className="progress-track">
+            <div className="progress-fill" style={{ width: `${progressPercent}%` }} />
+          </div>
+          <p>{getMomentumMessage(progressPercent)}</p>
+        </div>
 
         {submitted ? (
           <div className="overlay">
@@ -266,7 +327,7 @@ export default function HealthCheckTab() {
             <div className="form-group">
               <label htmlFor="compliance"><strong>Do you have compliance requirements? (Select all that apply)</strong></label>
               <div className="checkbox-group compliance-multicol">
-                {['ISO certifications', 'FDA regulations', 'OSHA compliance', 'Data privacy (GDPR, CCPA)', 'Industry standards', 'No specific requirements'].map(comp => (
+                {['ISO certifications', 'FDA regulations', 'OSHA compliance', 'Data privacy (GDPR, CCPA)', 'CMMC Level 2', 'No specific requirements'].map(comp => (
                   <label key={comp} className="checkbox-label">
                     <input
                       type="checkbox"
@@ -283,6 +344,36 @@ export default function HealthCheckTab() {
                   </label>
                 ))}
               </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="yearsWithCurrentSystem"><strong>Average age of your core production systems (years)</strong></label>
+              <input
+                type="range"
+                id="yearsWithCurrentSystem"
+                name="yearsWithCurrentSystem"
+                min="1"
+                max="15"
+                step="1"
+                value={formData.yearsWithCurrentSystem || '6'}
+                onChange={handleChange}
+              />
+              <div className="slider-caption">Current selection: {formData.yearsWithCurrentSystem || '6'} years</div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="downtime"><strong>Estimated unplanned downtime per month (%)</strong></label>
+              <input
+                type="range"
+                id="downtime"
+                name="downtime"
+                min="0"
+                max="20"
+                step="0.5"
+                value={formData.downtime || '3'}
+                onChange={handleChange}
+              />
+              <div className="slider-caption">Current selection: {formData.downtime || '3'}%</div>
             </div>
 
             {/* Operations & Visibility */}
@@ -392,36 +483,36 @@ export default function HealthCheckTab() {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="breachDetectionConfidence"><strong>How confident are you in your team's ability to detect a breach within 24 hours?</strong></label>
-                <select
+                <input
+                  type="range"
                   id="breachDetectionConfidence"
                   name="breachDetectionConfidence"
-                  value={formData.breachDetectionConfidence}
+                  min="1"
+                  max="5"
+                  step="1"
+                  value={formData.breachDetectionConfidence || '2'}
                   onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="1">1 - Not at all confident</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5 - Extremely confident</option>
-                </select>
+                />
+                <div className="slider-caption">
+                  Confidence level: {formData.breachDetectionConfidence || '2'} / 5
+                </div>
               </div>
 
               <div className="form-group">
                 <label htmlFor="cybersecurityBudgetPercentage"><strong>What percentage of your IT budget is allocated to cybersecurity?</strong></label>
-                <select
+                <input
+                  type="range"
                   id="cybersecurityBudgetPercentage"
                   name="cybersecurityBudgetPercentage"
-                  value={formData.cybersecurityBudgetPercentage}
+                  min="0"
+                  max="25"
+                  step="1"
+                  value={formData.cybersecurityBudgetPercentage || '8'}
                   onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="less-5">Less than 5%</option>
-                  <option value="5-10">5–10%</option>
-                  <option value="11-20">11–20%</option>
-                  <option value="more-20">More than 20%</option>
-                  <option value="unsure">Unsure</option>
-                </select>
+                />
+                <div className="slider-caption">
+                  Current allocation: {formData.cybersecurityBudgetPercentage || '8'}% ({getBudgetLabel(formData.cybersecurityBudgetPercentage || '8')})
+                </div>
               </div>
             </div>
 
