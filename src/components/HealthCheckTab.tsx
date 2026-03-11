@@ -27,6 +27,14 @@ interface FormData {
   securityAwareness: string[]
   phishingExercises: string
   cybersecurityBudgetPercentage: string
+  mfaCoverage: string
+  edrLoggingCoverage: string
+  patchCadence: string
+  itOtSegmentation: string
+  immutableBackups: string
+  incidentRunbooks: string
+  encryptionCoverage: string
+  supplyChainRiskProgram: string
 }
 
 const REQUIRED_FIELDS: Array<keyof FormData> = [
@@ -40,6 +48,12 @@ const REQUIRED_FIELDS: Array<keyof FormData> = [
   'formalCybersecurityPolicy',
   'riskAssessments',
   'disasterRecoveryPlan',
+  'mfaCoverage',
+  'edrLoggingCoverage',
+  'patchCadence',
+  'itOtSegmentation',
+  'immutableBackups',
+  'incidentRunbooks',
   'timeline',
 ]
 
@@ -85,6 +99,14 @@ export default function HealthCheckTab() {
     securityAwareness: [],
     phishingExercises: '',
     cybersecurityBudgetPercentage: '',
+    mfaCoverage: '',
+    edrLoggingCoverage: '',
+    patchCadence: '',
+    itOtSegmentation: '',
+    immutableBackups: '',
+    incidentRunbooks: '',
+    encryptionCoverage: '',
+    supplyChainRiskProgram: '',
   })
 
   const [submitted, setSubmitted] = useState(false)
@@ -127,6 +149,14 @@ export default function HealthCheckTab() {
         'additional_notes': formData.additionalNotes,
         'assessment_schedule_date': assessmentDate,
         'assessment_schedule_time': assessmentTime,
+        'mfa_coverage': formData.mfaCoverage,
+        'edr_logging_coverage': formData.edrLoggingCoverage,
+        'patch_cadence': formData.patchCadence,
+        'it_ot_segmentation': formData.itOtSegmentation,
+        'immutable_backups': formData.immutableBackups,
+        'incident_runbooks': formData.incidentRunbooks,
+        'encryption_coverage': formData.encryptionCoverage,
+        'supply_chain_risk_program': formData.supplyChainRiskProgram,
       }
 
       // Submit to Formspree
@@ -178,6 +208,14 @@ export default function HealthCheckTab() {
             securityAwareness: [],
             phishingExercises: '',
             cybersecurityBudgetPercentage: '',
+            mfaCoverage: '',
+            edrLoggingCoverage: '',
+            patchCadence: '',
+            itOtSegmentation: '',
+            immutableBackups: '',
+            incidentRunbooks: '',
+            encryptionCoverage: '',
+            supplyChainRiskProgram: '',
           })
           setSubmitted(false)
         }, 4000)
@@ -430,6 +468,142 @@ export default function HealthCheckTab() {
                 <option value="general-it">Handled as part of general IT</option>
                 <option value="outsourced">Outsourced to third party</option>
               </select>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="mfaCoverage"><strong>MFA coverage across workforce and privileged accounts</strong></label>
+                <select
+                  id="mfaCoverage"
+                  name="mfaCoverage"
+                  value={formData.mfaCoverage}
+                  onChange={handleChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="full">Enabled for nearly all users/admin access</option>
+                  <option value="partial">Enabled for some users/systems</option>
+                  <option value="pilot">Pilot or limited rollout</option>
+                  <option value="none">Not in place</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edrLoggingCoverage"><strong>EDR and centralized logging maturity</strong></label>
+                <select
+                  id="edrLoggingCoverage"
+                  name="edrLoggingCoverage"
+                  value={formData.edrLoggingCoverage}
+                  onChange={handleChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="full">Plant + enterprise coverage with active monitoring</option>
+                  <option value="partial">Coverage on critical systems only</option>
+                  <option value="minimal">Basic AV/logs, limited correlation</option>
+                  <option value="none">No formal EDR/SIEM visibility</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="patchCadence"><strong>Security patching cadence for IT/OT systems</strong></label>
+                <select
+                  id="patchCadence"
+                  name="patchCadence"
+                  value={formData.patchCadence}
+                  onChange={handleChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="monthly">Monthly cadence with exception tracking</option>
+                  <option value="quarterly">Quarterly windows with partial tracking</option>
+                  <option value="ad-hoc">Ad-hoc patching when issues arise</option>
+                  <option value="rarely">Rarely patched / vendor driven only</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="itOtSegmentation"><strong>IT/OT network segmentation status</strong></label>
+                <select
+                  id="itOtSegmentation"
+                  name="itOtSegmentation"
+                  value={formData.itOtSegmentation}
+                  onChange={handleChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="strong">Documented segmentation with managed zones</option>
+                  <option value="partial">Partial segmentation in key areas</option>
+                  <option value="minimal">Basic VLAN separation only</option>
+                  <option value="none">Flat network / no OT segmentation</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="immutableBackups"><strong>Backup strategy and immutability</strong></label>
+                <select
+                  id="immutableBackups"
+                  name="immutableBackups"
+                  value={formData.immutableBackups}
+                  onChange={handleChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="tested-immutable">Immutable backups with restore testing</option>
+                  <option value="immutable-untested">Immutable backups, limited restore drills</option>
+                  <option value="traditional">Traditional backups only</option>
+                  <option value="none">No reliable backup posture</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="incidentRunbooks"><strong>Incident response runbooks and exercises</strong></label>
+                <select
+                  id="incidentRunbooks"
+                  name="incidentRunbooks"
+                  value={formData.incidentRunbooks}
+                  onChange={handleChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="documented-tested">Documented and tested at least annually</option>
+                  <option value="documented-untested">Documented but not exercised regularly</option>
+                  <option value="informal">Informal tribal-knowledge response only</option>
+                  <option value="none">No runbooks in place</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="encryptionCoverage"><strong>Encryption coverage for sensitive data</strong></label>
+                <select
+                  id="encryptionCoverage"
+                  name="encryptionCoverage"
+                  value={formData.encryptionCoverage}
+                  onChange={handleChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="broad">At rest + in transit across critical systems</option>
+                  <option value="partial">Partial encryption by system or use case</option>
+                  <option value="minimal">Limited encryption controls</option>
+                  <option value="none">No formal encryption standard</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="supplyChainRiskProgram"><strong>Supplier / third-party cyber risk management</strong></label>
+                <select
+                  id="supplyChainRiskProgram"
+                  name="supplyChainRiskProgram"
+                  value={formData.supplyChainRiskProgram}
+                  onChange={handleChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="formal">Formal vendor risk reviews and contract controls</option>
+                  <option value="partial">Reviews for critical suppliers only</option>
+                  <option value="informal">Informal checks, no consistent standard</option>
+                  <option value="none">No supplier cyber risk process</option>
+                </select>
+              </div>
             </div>
 
             <div className="form-group">

@@ -25,6 +25,14 @@ interface FormData {
   securityAwareness: string[]
   phishingExercises: string
   cybersecurityBudgetPercentage: string
+  mfaCoverage: string
+  edrLoggingCoverage: string
+  patchCadence: string
+  itOtSegmentation: string
+  immutableBackups: string
+  incidentRunbooks: string
+  encryptionCoverage: string
+  supplyChainRiskProgram: string
 }
 
 type MaturityLevel = 'Initial' | 'Developing' | 'Defined' | 'Managed' | 'Optimized'
@@ -35,10 +43,10 @@ interface CategoryMaturity {
   level: MaturityLevel
   referenceModel: string
   dimensions: string[]
+  baselineBand: string
+  baselineComparison: string
   recommendation: string
 }
-
-const QUICK_ASSESSMENT_CEILING = 56
 
 export async function generateHealthCheckPDF(formData: FormData): Promise<void> {
   // Create a temporary container for HTML to render
@@ -53,10 +61,10 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
 
   // Calculate maturity against reference anchors
   const categoryScores = buildMaturityProfile(formData)
-  const rawOverallScore = Math.round(categoryScores.reduce((sum, item) => sum + item.score, 0) / categoryScores.length)
-  const benchmarkAdjustedScore = calculateBenchmarkAdjustedScore(formData, rawOverallScore)
-  const overallScore = benchmarkAdjustedScore
+  const overallScore = Math.round(categoryScores.reduce((sum, item) => sum + item.score, 0) / categoryScores.length)
   const overallLevel = getMaturityLevel(overallScore)
+  const overallBaselineBand = '60-70%'
+  const overallComparison = getBaselineComparisonSentence(overallScore, 60, 70)
 
   const html = `
     <div style="font-family: Arial, sans-serif; color: #333;">
@@ -90,13 +98,14 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
 
       <!-- Reference alignment -->
       <div style="margin-bottom: 20px;">
-        <h2 style="color: #0052cc; font-size: 16px; margin: 0 0 10px 0; border-bottom: 2px solid #0052cc; padding-bottom: 8px;">Reference Model Alignment</h2>
+        <h2 style="color: #0052cc; font-size: 16px; margin: 0 0 10px 0; border-bottom: 2px solid #0052cc; padding-bottom: 8px;">Methodology & Reference Alignment</h2>
         <div style="background: #f9fbff; border: 1px solid #dbe8ff; border-radius: 8px; padding: 12px; font-size: 11px; line-height: 1.5;">
-          <p style="margin: 0 0 8px 0;"><strong>This report estimates maturity against regional and state reference practices:</strong></p>
+          <p style="margin: 0 0 8px 0;"><strong>How your score is calculated:</strong></p>
+          <p style="margin: 0 0 8px 0;">Your scores are based on your answers and benchmarked against practices promoted by regional programs for manufacturers in Northeast Ohio (Akron, Canton, Cleveland and surrounding areas).</p>
           <ul style="margin: 0; padding-left: 18px;">
-            <li><strong>Systems Modernization:</strong> Smart Manufacturing Cluster of Northeast Ohio Data-Driven Manufacturing readiness dimensions (engagement, organizational support, IIoT potential, workforce readiness, digital maturity).</li>
-            <li><strong>Security & Compliance:</strong> Ohio Comprehensive Cybersecurity Plan alignment with NIST CSF style controls (identity/MFA readiness, monitoring, data protection, training, and incident response), plus manufacturing-focused assessment lenses (ICS/OT security, supply-chain risk, policy and documentation readiness).</li>
-            <li><strong>Scoring transparency:</strong> This quick assessment is self-attested, benchmark-normalized, and capped at ${QUICK_ASSESSMENT_CEILING}% until evidence validation (policy artifacts, control logs, tabletop records) is completed.</li>
+            <li><strong>Systems Modernization:</strong> aligned with Smart Manufacturing Cluster of Northeast Ohio Data-Driven Manufacturing (DDM) dimensions: engagement, organizational support, IIoT opportunities, workforce readiness, and digital maturity.</li>
+            <li><strong>Security Posture and Compliance Status:</strong> aligned with Ohio Comprehensive Cybersecurity Plan and NIST-oriented controls (MFA, logging/EDR, encryption, training, incident response), plus manufacturing-focused regional assessment control areas (ICS/OT security, supply-chain risk, policy, training, documentation).</li>
+            <li><strong>Benchmark interpretation:</strong> baseline ranges represent typical maturity observed in small-to-mid-size regional manufacturers and are data-informed benchmarks, not official state averages or certifications.</li>
           </ul>
         </div>
       </div>
@@ -106,21 +115,23 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
         <h2 style="color: #0052cc; font-size: 16px; margin: 0 0 10px 0; border-bottom: 2px solid #0052cc; padding-bottom: 8px;">Maturity Summary</h2>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
           <div style="text-align: center; padding: 15px; background-color: #f9f9f9; border-radius: 8px;">
-            <p style="margin: 0 0 10px 0; font-weight: bold; font-size: 14px;">Benchmark-Adjusted Maturity</p>
+            <p style="margin: 0 0 10px 0; font-weight: bold; font-size: 14px;">Overall Maturity</p>
             <div style="font-size: 36px; font-weight: bold; color: ${getScoreColor(overallScore)};">${overallScore}%</div>
             <div style="width: 100%; height: 20px; background-color: #e0e0e0; border-radius: 10px; margin: 10px 0; overflow: hidden;">
-              <div style="width: ${(overallScore / QUICK_ASSESSMENT_CEILING) * 100}%; height: 100%; background-color: ${getScoreColor(overallScore)}; transition: width 0.3s;"></div>
+              <div style="width: ${overallScore}%; height: 100%; background-color: ${getScoreColor(overallScore)}; transition: width 0.3s;"></div>
             </div>
-            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${overallLevel} maturity (quick-assessment scale)</p>
+            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${overallLevel} maturity</p>
+            <p style="margin: 5px 0 0 0; font-size: 11px; color: #444;"><strong>NE Ohio baseline band:</strong> ${overallBaselineBand}</p>
+            <p style="margin: 5px 0 0 0; font-size: 11px; color: #444;">${overallComparison}</p>
           </div>
 
           <div style="padding: 15px; background-color: #f9f9f9; border-radius: 8px; font-size: 11px;">
             <p style="margin: 0 0 8px 0; font-weight: bold; font-size: 14px;">Maturity Scale</p>
-            <p style="margin: 0 0 4px 0;"><strong>Initial</strong> (0-19): Reactive, informal practices</p>
-            <p style="margin: 0 0 4px 0;"><strong>Developing</strong> (20-33): Emerging repeatability</p>
-            <p style="margin: 0 0 4px 0;"><strong>Defined</strong> (34-45): Documented baseline in place</p>
-            <p style="margin: 0 0 4px 0;"><strong>Managed</strong> (46-52): Measured and actively managed</p>
-            <p style="margin: 0;"><strong>Optimized</strong> (53-56): Top quick-assessment range prior to evidence validation</p>
+            <p style="margin: 0 0 4px 0;"><strong>Initial</strong> (0-30): Minimal / reactive controls and modernization</p>
+            <p style="margin: 0 0 4px 0;"><strong>Developing</strong> (31-50): Early programs, partial repeatability</p>
+            <p style="margin: 0 0 4px 0;"><strong>Defined</strong> (51-65): Moderate readiness with uneven consistency</p>
+            <p style="margin: 0 0 4px 0;"><strong>Managed</strong> (66-85): Strong roadmap with measurable controls</p>
+            <p style="margin: 0;"><strong>Optimized</strong> (86-100): Regional leading maturity and resilience</p>
           </div>
         </div>
       </div>
@@ -140,6 +151,8 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
               </div>
               <p style="margin: 0 0 5px 0; color: #4d4d4d;"><strong>Reference:</strong> ${escapeHtml(category.referenceModel)}</p>
               <p style="margin: 0 0 5px 0; color: #4d4d4d;"><strong>Dimensions measured:</strong> ${escapeHtml(category.dimensions.join(', '))}</p>
+              <p style="margin: 0 0 5px 0; color: #4d4d4d;"><strong>NE Ohio baseline band:</strong> ${escapeHtml(category.baselineBand)}</p>
+              <p style="margin: 0 0 5px 0; color: #4d4d4d;">${escapeHtml(category.baselineComparison)}</p>
               <p style="margin: 0; color: #2f4f7f;"><strong>Priority recommendation:</strong> ${escapeHtml(category.recommendation)}</p>
             </div>
           `).join('')}
@@ -186,6 +199,22 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
           <tr>
             <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Risk Assessments:</td>
             <td style="padding: 10px; border: 1px solid #ddd;">${escapeHtml(formData.riskAssessments)}</td>
+          </tr>
+          <tr style="background-color: #f5f5f5;">
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">MFA Coverage:</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">${escapeHtml(formData.mfaCoverage)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">EDR/Logging Coverage:</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">${escapeHtml(formData.edrLoggingCoverage)}</td>
+          </tr>
+          <tr style="background-color: #f5f5f5;">
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">IT/OT Segmentation:</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">${escapeHtml(formData.itOtSegmentation)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Backup Immutability:</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">${escapeHtml(formData.immutableBackups)}</td>
           </tr>
         </table>
       </div>
@@ -254,37 +283,39 @@ function buildMaturityProfile(formData: FormData): CategoryMaturity[] {
 function calculateSystemsModernization(formData: FormData): CategoryMaturity {
   const digitalMaturity = calculateSystemsAgeScore(formData.yearsWithCurrentSystem)
   const engagement = mapScore(formData.timeline, {
-    immediate: 85,
-    '30days': 80,
-    quarter: 68,
-    exploring: 55,
-  }, 60)
+    immediate: 72,
+    '30days': 66,
+    quarter: 56,
+    exploring: 45,
+  }, 50)
   const iiotPotential = mapScore(formData.integrationNeeds, {
-    siloed: 35,
-    partial: 60,
-    mostly: 78,
-    fully: 92,
-  }, 50)
+    siloed: 24,
+    partial: 46,
+    mostly: 62,
+    fully: 84,
+  }, 46)
   const orgSupport = mapScore(formData.productionVisibility, {
-    manual: 35,
-    partial: 58,
-    good: 78,
-    excellent: 92,
-  }, 50)
+    manual: 25,
+    partial: 47,
+    good: 64,
+    excellent: 85,
+  }, 48)
   const workforceReadiness = mapScore(formData.securityAwareness?.[0] ?? '', {
-    'Yes, quarterly or more frequently': 90,
-    'Yes, annually': 72,
-    'Only during onboarding': 50,
-    'No formal training': 30,
-  }, 55)
+    'Yes, quarterly or more frequently': 78,
+    'Yes, annually': 62,
+    'Only during onboarding': 45,
+    'No formal training': 25,
+  }, 46)
 
   const score = weightedAverage([
-    [engagement, 0.15],
+    [engagement, 0.18],
     [orgSupport, 0.20],
     [iiotPotential, 0.25],
-    [workforceReadiness, 0.15],
-    [digitalMaturity, 0.25],
+    [workforceReadiness, 0.17],
+    [digitalMaturity, 0.20],
   ])
+  const baselineMin = 50
+  const baselineMax = 65
 
   return {
     name: 'Systems Modernization',
@@ -292,6 +323,8 @@ function calculateSystemsModernization(formData: FormData): CategoryMaturity {
     level: getMaturityLevel(score),
     referenceModel: 'SMCNEO DDM Readiness dimensions',
     dimensions: ['engagement', 'organizational support', 'IIoT potential', 'workforce readiness', 'digital maturity'],
+    baselineBand: `${baselineMin}-${baselineMax}%`,
+    baselineComparison: getBaselineComparisonSentence(score, baselineMin, baselineMax),
     recommendation: score < 70
       ? 'Prioritize one pilot line for real-time visibility and phased system integration, then formalize workforce enablement.'
       : 'Expand successful pilots into repeatable digital standards across lines and suppliers.',
@@ -299,56 +332,79 @@ function calculateSystemsModernization(formData: FormData): CategoryMaturity {
 }
 
 function calculateSecurityPosture(formData: FormData): CategoryMaturity {
-  const policy = mapScore(formData.formalCybersecurityPolicy, {
-    'Yes, comprehensive policy': 92,
-    'Yes, basic policy': 72,
-    'In development': 50,
-    No: 25,
-  }, 50)
-
-  const riskAssessments = mapScore(formData.riskAssessments, {
-    quarterly: 90,
-    annually: 75,
-    sporadic: 50,
-    never: 25,
-  }, 50)
-
-  const detectionConfidence = normalizeFivePointScale(formData.breachDetectionConfidence)
-  const response = mapScore(formData.disasterRecoveryPlan, {
-    'Yes, tested regularly': 90,
-    'Yes, but untested': 65,
-    'In development': 48,
-    No: 25,
-  }, 50)
+  const mfa = mapScore(formData.mfaCoverage, {
+    full: 88,
+    partial: 66,
+    pilot: 48,
+    none: 20,
+  }, 48)
+  const edrLogging = mapScore(formData.edrLoggingCoverage, {
+    full: 86,
+    partial: 64,
+    minimal: 46,
+    none: 18,
+  }, 46)
+  const patching = mapScore(formData.patchCadence, {
+    monthly: 84,
+    quarterly: 65,
+    'ad-hoc': 44,
+    rarely: 18,
+  }, 45)
+  const segmentation = mapScore(formData.itOtSegmentation, {
+    strong: 88,
+    partial: 62,
+    minimal: 42,
+    none: 15,
+  }, 44)
+  const backups = mapScore(formData.immutableBackups, {
+    'tested-immutable': 90,
+    'immutable-untested': 68,
+    traditional: 48,
+    none: 14,
+  }, 45)
+  const runbooks = mapScore(formData.incidentRunbooks, {
+    'documented-tested': 88,
+    'documented-untested': 62,
+    informal: 42,
+    none: 16,
+  }, 44)
+  const encryption = mapScore(formData.encryptionCoverage, {
+    broad: 84,
+    partial: 64,
+    minimal: 44,
+    none: 20,
+  }, 48)
   const training = mapScore(formData.phishingExercises, {
-    regularly: 88,
-    occasionally: 65,
-    no: 35,
-  }, 55)
-  const staffing = mapScore(formData.dedicatedSecurityTeam, {
-    dedicated: 88,
-    outsourced: 78,
-    'part-time': 62,
-    'general-it': 55,
-  }, 58)
+    regularly: 74,
+    occasionally: 56,
+    no: 34,
+  }, 50)
+  const detectionConfidence = normalizeFivePointScale(formData.breachDetectionConfidence)
 
   const score = weightedAverage([
-    [policy, 0.20],
-    [riskAssessments, 0.20],
+    [mfa, 0.14],
+    [edrLogging, 0.14],
+    [patching, 0.12],
+    [segmentation, 0.14],
+    [backups, 0.12],
+    [runbooks, 0.12],
+    [encryption, 0.10],
+    [training, 0.06],
     [detectionConfidence, 0.15],
-    [response, 0.20],
-    [training, 0.10],
-    [staffing, 0.15],
   ])
+  const baselineMin = 55
+  const baselineMax = 70
 
   return {
     name: 'Security Posture',
     score,
     level: getMaturityLevel(score),
     referenceModel: 'Ohio OCCP + NIST CSF-aligned control practices',
-    dimensions: ['policy governance', 'assessment cadence', 'monitoring/detection', 'incident response', 'training culture'],
+    dimensions: ['MFA coverage', 'EDR/logging visibility', 'patch management', 'IT/OT segmentation', 'immutable backups', 'incident runbooks', 'encryption', 'training'],
+    baselineBand: `${baselineMin}-${baselineMax}%`,
+    baselineComparison: getBaselineComparisonSentence(score, baselineMin, baselineMax),
     recommendation: score < 70
-      ? 'Establish a documented control baseline (MFA/identity, logging/EDR, incident playbooks, tested recovery) and measure quarterly.'
+      ? 'Close control gaps in MFA, monitoring, segmentation, and tested immutable recovery to align with OCCP/NIST expectations.'
       : 'Shift from baseline controls to continuous monitoring metrics and tabletop-driven improvement cycles.',
   }
 }
@@ -359,57 +415,69 @@ function calculateComplianceStatus(formData: FormData): CategoryMaturity {
   const effectiveRequirements = selectedCompliance.filter(item => item !== 'No specific requirements').length
 
   const complianceScope = hasNoRequirements && effectiveRequirements === 0
-    ? 35
+    ? 30
     : effectiveRequirements >= 3
-      ? 88
+      ? 76
       : effectiveRequirements === 2
-        ? 76
+        ? 64
         : effectiveRequirements === 1
-          ? 62
+          ? 54
           : 50
 
   const policyReadiness = mapScore(formData.formalCybersecurityPolicy, {
-    'Yes, comprehensive policy': 90,
-    'Yes, basic policy': 70,
-    'In development': 52,
-    No: 30,
-  }, 52)
+    'Yes, comprehensive policy': 80,
+    'Yes, basic policy': 62,
+    'In development': 48,
+    No: 28,
+  }, 46)
 
   const workforceReadiness = mapScore(formData.securityAwareness?.[0] ?? '', {
-    'Yes, quarterly or more frequently': 90,
-    'Yes, annually': 72,
-    'Only during onboarding': 50,
-    'No formal training': 28,
-  }, 55)
+    'Yes, quarterly or more frequently': 78,
+    'Yes, annually': 62,
+    'Only during onboarding': 46,
+    'No formal training': 24,
+  }, 45)
 
   const documentationCadence = mapScore(formData.riskAssessments, {
-    quarterly: 88,
-    annually: 72,
-    sporadic: 50,
-    never: 28,
-  }, 50)
+    quarterly: 80,
+    annually: 64,
+    sporadic: 44,
+    never: 24,
+  }, 45)
 
-  const manufacturingControlReadiness = mapScore(formData.integrationNeeds, {
-    siloed: 35,
+  const supplyChainReadiness = mapScore(formData.supplyChainRiskProgram, {
+    formal: 76,
     partial: 58,
-    mostly: 75,
-    fully: 86,
-  }, 55)
+    informal: 42,
+    none: 20,
+  }, 44)
+
+  const runbookEvidence = mapScore(formData.incidentRunbooks, {
+    'documented-tested': 78,
+    'documented-untested': 58,
+    informal: 40,
+    none: 20,
+  }, 44)
 
   const score = weightedAverage([
     [complianceScope, 0.20],
-    [policyReadiness, 0.25],
-    [workforceReadiness, 0.20],
+    [policyReadiness, 0.22],
+    [workforceReadiness, 0.18],
     [documentationCadence, 0.20],
-    [manufacturingControlReadiness, 0.15],
+    [runbookEvidence, 0.10],
+    [supplyChainReadiness, 0.10],
   ])
+  const baselineMin = 45
+  const baselineMax = 60
 
   return {
     name: 'Compliance Status',
     score,
     level: getMaturityLevel(score),
     referenceModel: 'OCCP/NIST control evidence + NE Ohio manufacturing assessment focus areas',
-    dimensions: ['control scope', 'policy documentation', 'training evidence', 'assessment records', 'ICS/OT readiness proxy'],
+    dimensions: ['framework scope (incl. CMMC Level 2)', 'policy documentation', 'training cadence', 'risk assessment records', 'incident documentation', 'supply-chain risk controls'],
+    baselineBand: `${baselineMin}-${baselineMax}%`,
+    baselineComparison: getBaselineComparisonSentence(score, baselineMin, baselineMax),
     recommendation: score < 70
       ? 'Define minimum policy and evidence standards (training logs, risk records, incident documentation) tied to your required frameworks.'
       : 'Automate evidence collection and align audit artifacts to each control owner for faster certification cycles.',
@@ -418,40 +486,51 @@ function calculateComplianceStatus(formData: FormData): CategoryMaturity {
 
 function calculateOperationalResilience(formData: FormData): CategoryMaturity {
   const downtime = calculateDowntimeScore(formData.downtime)
-  const responseReadiness = mapScore(formData.disasterRecoveryPlan, {
-    'Yes, tested regularly': 92,
-    'Yes, but untested': 68,
-    'In development': 50,
-    No: 25,
-  }, 52)
+  const recovery = mapScore(formData.disasterRecoveryPlan, {
+    'Yes, tested regularly': 84,
+    'Yes, but untested': 62,
+    'In development': 45,
+    No: 22,
+  }, 44)
+  const backupResilience = mapScore(formData.immutableBackups, {
+    'tested-immutable': 88,
+    'immutable-untested': 64,
+    traditional: 45,
+    none: 20,
+  }, 44)
   const incidentExposure = mapScore(formData.cybersecurityIncident, {
-    No: 86,
-    'Suspicious activity detected': 68,
-    'Yes, minor incident': 55,
-    'Yes, significant incident': 35,
-  }, 58)
+    No: 74,
+    'Suspicious activity detected': 58,
+    'Yes, minor incident': 45,
+    'Yes, significant incident': 28,
+  }, 50)
   const detectionConfidence = normalizeFivePointScale(formData.breachDetectionConfidence)
   const operationsVisibility = mapScore(formData.productionVisibility, {
-    manual: 35,
-    partial: 60,
-    good: 80,
-    excellent: 92,
-  }, 55)
+    manual: 24,
+    partial: 48,
+    good: 66,
+    excellent: 82,
+  }, 46)
 
   const score = weightedAverage([
-    [downtime, 0.30],
-    [responseReadiness, 0.25],
-    [incidentExposure, 0.15],
-    [detectionConfidence, 0.15],
-    [operationsVisibility, 0.15],
+    [downtime, 0.28],
+    [recovery, 0.22],
+    [backupResilience, 0.20],
+    [incidentExposure, 0.12],
+    [detectionConfidence, 0.10],
+    [operationsVisibility, 0.08],
   ])
+  const baselineMin = 50
+  const baselineMax = 65
 
   return {
     name: 'Operational Resilience',
     score,
     level: getMaturityLevel(score),
-    referenceModel: 'Manufacturing continuity and cyber resilience practices promoted in state/regional programs',
-    dimensions: ['downtime impact', 'recovery readiness', 'incident exposure', 'detection speed', 'operational visibility'],
+    referenceModel: 'OCCP/NIST incident response and manufacturing continuity practices',
+    dimensions: ['downtime impact', 'recovery readiness', 'backup immutability', 'incident exposure', 'detection speed', 'operational visibility'],
+    baselineBand: `${baselineMin}-${baselineMax}%`,
+    baselineComparison: getBaselineComparisonSentence(score, baselineMin, baselineMax),
     recommendation: score < 70
       ? 'Run recovery tests, tighten downtime KPIs, and map critical systems to incident response playbooks.'
       : 'Move to scenario-based drills that include IT, OT, and supplier dependencies.',
@@ -468,66 +547,59 @@ function weightedAverage(items: Array<[number, number]>): number {
 }
 
 function getMaturityLevel(score: number): MaturityLevel {
-  if (score >= 53) return 'Optimized'
-  if (score >= 46) return 'Managed'
-  if (score >= 34) return 'Defined'
-  if (score >= 20) return 'Developing'
+  if (score >= 86) return 'Optimized'
+  if (score >= 66) return 'Managed'
+  if (score >= 51) return 'Defined'
+  if (score >= 31) return 'Developing'
   return 'Initial'
 }
 
-function calculateBenchmarkAdjustedScore(formData: FormData, rawOverallScore: number): number {
-  const evidenceSignals = [
-    formData.formalCybersecurityPolicy,
-    formData.riskAssessments,
-    formData.disasterRecoveryPlan,
-    formData.securityAwareness?.[0] ?? '',
-    formData.phishingExercises,
-    formData.dedicatedSecurityTeam,
-    formData.breachDetectionConfidence,
-    formData.cybersecurityBudgetPercentage,
-    formData.cybersecurityIncident,
-  ]
-
-  const evidenceCount = evidenceSignals.filter(Boolean).length
-  const evidenceFactor = evidenceCount / evidenceSignals.length
-
-  // Anchored to self-attested quick-screening reliability for regional manufacturing cohorts.
-  // Evidence-rich responses preserve more of the raw maturity estimate.
-  const reliabilityMultiplier = 0.58 + (0.22 * evidenceFactor)
-  const adjusted = Math.round(rawOverallScore * reliabilityMultiplier)
-
-  return Math.max(0, Math.min(QUICK_ASSESSMENT_CEILING, adjusted))
+function getBaselineComparisonSentence(score: number, baselineMin: number, baselineMax: number): string {
+  if (score < baselineMin) {
+    return 'Your score indicates you are below the typical NE Ohio manufacturer baseline in this area.'
+  }
+  if (score > baselineMax) {
+    return 'Your score indicates you are above the typical NE Ohio manufacturer baseline in this area.'
+  }
+  return 'Your score indicates you are at the typical NE Ohio manufacturer baseline in this area.'
 }
 
 function calculateSystemsAgeScore(age: string): number {
   const ageNum = parseInt(age, 10) || 0
-  if (ageNum <= 3) return 92
-  if (ageNum <= 5) return 78
-  if (ageNum <= 7) return 64
-  if (ageNum <= 10) return 48
-  return 32
+  if (ageNum <= 3) return 88
+  if (ageNum <= 5) return 72
+  if (ageNum <= 7) return 60
+  if (ageNum <= 10) return 45
+  return 30
 }
 
 function calculateDowntimeScore(downtime: string): number {
   const downtimeNum = parseFloat(downtime) || 0
-  if (downtimeNum === 0) return 95
-  if (downtimeNum <= 1) return 85
-  if (downtimeNum <= 3) return 72
-  if (downtimeNum <= 5) return 58
-  if (downtimeNum <= 10) return 42
-  return 28
+  if (downtimeNum === 0) return 88
+  if (downtimeNum <= 1) return 78
+  if (downtimeNum <= 3) return 64
+  if (downtimeNum <= 5) return 52
+  if (downtimeNum <= 10) return 38
+  return 25
 }
 
 function normalizeFivePointScale(value: string): number {
   const numeric = parseInt(value, 10)
   if (Number.isNaN(numeric) || numeric < 1) return 50
-  return Math.min(100, Math.max(20, numeric * 20))
+  const scaleMap: Record<number, number> = {
+    1: 22,
+    2: 42,
+    3: 56,
+    4: 70,
+    5: 84,
+  }
+  return scaleMap[numeric] ?? 50
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 46) return '#28a745' // Green
-  if (score >= 34) return '#ffc107' // Yellow
-  if (score >= 20) return '#fd7e14' // Orange
+  if (score >= 66) return '#28a745' // Green
+  if (score >= 51) return '#ffc107' // Yellow
+  if (score >= 31) return '#fd7e14' // Orange
   return '#dc3545' // Red
 }
 
