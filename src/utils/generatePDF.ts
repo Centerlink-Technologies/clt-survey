@@ -40,6 +40,7 @@ interface CategoryMaturity {
 
 export async function generateHealthCheckPDF(formData: FormData): Promise<void> {
   // Create a temporary container for HTML to render
+  const baseUrl = import.meta.env.BASE_URL
   const container = document.createElement('div')
   container.style.position = 'absolute'
   container.style.left = '-9999px'
@@ -57,7 +58,7 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
     <div style="font-family: Arial, sans-serif; color: #333;">
       <!-- Header -->
       <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #0052cc;">
-        <img src="/clt-survey/centerlink-logo.svg" alt="Centerlink Technologies" style="height: 50px; width: auto;">
+          <img src="${baseUrl}centerlink-logo.svg" alt="Centerlink Technologies" style="height: 50px; width: auto;">
         <div>
           <h1 style="color: #0052cc; margin: 0; font-size: 24px;">Cybersecurity & Digital Maturity Report</h1>
           <p style="color: #666; margin: 3px 0 0 0; font-size: 12px;">Centerlink Technologies</p>

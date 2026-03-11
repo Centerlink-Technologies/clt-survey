@@ -3,10 +3,11 @@ import './Header.css'
 
 export default function Header() {
   const navigate = useNavigate()
+  const baseUrl = import.meta.env.BASE_URL
 
   const handleHomeClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    navigate('/clt-survey/')
+    navigate('/')
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }, 100)
@@ -14,7 +15,7 @@ export default function Header() {
 
   const handleWhyITClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    navigate('/clt-survey/')
+    navigate('/')
     setTimeout(() => {
       const whyItSection = document.querySelector('#why-it')
       if (whyItSection) {
@@ -26,8 +27,8 @@ export default function Header() {
   const scrollToForm = () => {
     // If we're not on home page, navigate there first
     const currentPath = window.location.pathname
-    if (!currentPath.includes('clt-survey/') || currentPath.endsWith('case-studies')) {
-      navigate('/clt-survey/')
+    if (currentPath.includes('case-studies')) {
+      navigate('/')
       setTimeout(() => {
         const formElement = document.querySelector('.healthcheck-form')
         if (formElement) {
@@ -47,8 +48,8 @@ export default function Header() {
     <header className="header">
       <div className="header-top">
         <div className="logo-section">
-          <Link to="/clt-survey/" className="logo-link">
-            <img src="/clt-survey/centerlink-logo.svg" alt="Centerlink Technologies" className="logo-image" />
+          <Link to="/" className="logo-link">
+            <img src={`${baseUrl}centerlink-logo.svg`} alt="Centerlink Technologies" className="logo-image" />
             <p className="tagline">Northeast Ohio Manufacturing IT Solutions Provider</p>
           </Link>
         </div>
@@ -63,7 +64,7 @@ export default function Header() {
           >
             IT Health Check
           </button>
-          <Link to="/clt-survey/case-studies" className="nav-button">
+          <Link to="/case-studies" className="nav-button">
             Case Studies & Testimonials
           </Link>
         </nav>

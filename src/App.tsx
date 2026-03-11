@@ -6,13 +6,16 @@ import CaseStudiesPage from './pages/CaseStudiesPage'
 import Footer from './components/Footer'
 
 function App() {
+  const baseName = import.meta.env.BASE_URL
+
   return (
-    <Router>
+    <Router basename={baseName}>
       <div className="app">
         <Header />
         <Routes>
-          <Route path="/clt-survey/" element={<HomePage />} />
-          <Route path="/clt-survey/case-studies" element={<CaseStudiesPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/case-studies" element={<CaseStudiesPage />} />
+          <Route path="*" element={<HomePage />} />
         </Routes>
         <Footer />
       </div>
