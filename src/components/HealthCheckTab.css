@@ -345,6 +345,33 @@
 
   .progress-panel {
     top: 86px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .progress-header {
+    margin-bottom: 5px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .progress-header strong {
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .progress-header span {
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .progress-track {
+    height: 6px;
+  }
+
+  .progress-panel p {
+    display: none;
   }
 
   .form-row {
