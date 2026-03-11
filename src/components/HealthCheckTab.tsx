@@ -74,6 +74,8 @@ function getMomentumMessage(progress: number): string {
 }
 
 export default function HealthCheckTab() {
+  const hasDismissedWelcome = typeof window !== 'undefined' && window.localStorage.getItem('clt-assessment-started') === 'true'
+
   const [formData, setFormData] = useState<FormData>({
     name: '',
     companyName: '',
@@ -111,7 +113,8 @@ export default function HealthCheckTab() {
 
   const [submitted, setSubmitted] = useState(false)
   const [showScheduleOverlay, setShowScheduleOverlay] = useState(false)
-  const [showWelcomeModal, setShowWelcomeModal] = useState(true)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(!hasDismissedWelcome)
+  const [showConfetti, setShowConfetti] = useState(false)
   const [assessmentDate, setAssessmentDate] = useState('')
   const [assessmentTime, setAssessmentTime] = useState('')
 
@@ -229,8 +232,23 @@ export default function HealthCheckTab() {
     }
   }
 
+  const handleStartAssessment = () => {
+    window.localStorage.setItem('clt-assessment-started', 'true')
+    setShowWelcomeModal(false)
+    setShowConfetti(true)
+    setTimeout(() => setShowConfetti(false), 2000)
+  }
+
   return (
     <section className="healthcheck-tab">
+      {showConfetti && (
+        <div className="confetti" aria-hidden="true">
+          {Array.from({ length: 16 }).map((_, i) => (
+            <span key={i} className="confetti-piece" />
+          ))}
+        </div>
+      )}
+
       {showWelcomeModal && (
         <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="assessment-modal-title">
           <div className="overlay-content welcome-overlay-content">
@@ -240,7 +258,7 @@ export default function HealthCheckTab() {
               You are taking a strong first step. Complete this interactive assessment to receive a
               benchmarked maturity report aligned to manufacturing-focused practices used in Northeast Ohio.
             </p>
-            <button type="button" className="submit-button" onClick={() => setShowWelcomeModal(false)}>
+            <button type="button" className="submit-button" onClick={handleStartAssessment}>
               Start Assessment
             </button>
           </div>

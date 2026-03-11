@@ -1,37 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import './Header.css'
 
 export default function Header() {
-  const navigate = useNavigate()
   const baseUrl = import.meta.env.BASE_URL
-
-  const handleHomeClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    navigate('/')
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }, 100)
-  }
-
-  const scrollToForm = () => {
-    // If we're not on home page, navigate there first
-    const currentPath = window.location.pathname
-    if (currentPath.includes('case-studies')) {
-      navigate('/')
-      setTimeout(() => {
-        const formElement = document.querySelector('.healthcheck-form')
-        if (formElement) {
-          formElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-      }, 100)
-    } else {
-      // Already on home page, just scroll
-      const formElement = document.querySelector('.healthcheck-form')
-      if (formElement) {
-        formElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    }
-  }
 
   return (
     <header className="header">
@@ -43,19 +14,6 @@ export default function Header() {
           </Link>
         </div>
       </div>
-
-      <nav className="header-nav">
-          <a href="#" className="nav-link" onClick={handleHomeClick}>Home</a>
-          <button 
-            className="nav-button"
-            onClick={scrollToForm}
-          >
-            IT Health Check
-          </button>
-          <Link to="/case-studies" className="nav-button">
-            Case Studies & Testimonials
-          </Link>
-        </nav>
     </header>
   )
 }

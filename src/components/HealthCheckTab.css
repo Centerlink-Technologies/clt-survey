@@ -28,6 +28,9 @@
   border-radius: 10px;
   padding: 12px 14px;
   margin-bottom: var(--spacing-lg);
+  position: sticky;
+  top: 108px;
+  z-index: 90;
 }
 
 .progress-header {
@@ -260,6 +263,56 @@
   font-size: 44px;
   line-height: 1;
 }
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1200;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -16px;
+  width: 10px;
+  height: 16px;
+  border-radius: 2px;
+  animation: confetti-fall 1.8s linear forwards;
+}
+
+.confetti-piece:nth-child(4n + 1) { background: #0052cc; }
+.confetti-piece:nth-child(4n + 2) { background: #00a3ff; }
+.confetti-piece:nth-child(4n + 3) { background: #ffb703; }
+.confetti-piece:nth-child(4n) { background: #7c3aed; }
+
+.confetti-piece:nth-child(1) { left: 6%; animation-delay: 0s; }
+.confetti-piece:nth-child(2) { left: 12%; animation-delay: 0.1s; }
+.confetti-piece:nth-child(3) { left: 18%; animation-delay: 0.05s; }
+.confetti-piece:nth-child(4) { left: 24%; animation-delay: 0.2s; }
+.confetti-piece:nth-child(5) { left: 30%; animation-delay: 0.1s; }
+.confetti-piece:nth-child(6) { left: 38%; animation-delay: 0.15s; }
+.confetti-piece:nth-child(7) { left: 46%; animation-delay: 0.05s; }
+.confetti-piece:nth-child(8) { left: 54%; animation-delay: 0.12s; }
+.confetti-piece:nth-child(9) { left: 60%; animation-delay: 0.18s; }
+.confetti-piece:nth-child(10) { left: 66%; animation-delay: 0.08s; }
+.confetti-piece:nth-child(11) { left: 72%; animation-delay: 0.14s; }
+.confetti-piece:nth-child(12) { left: 78%; animation-delay: 0.06s; }
+.confetti-piece:nth-child(13) { left: 84%; animation-delay: 0.1s; }
+.confetti-piece:nth-child(14) { left: 90%; animation-delay: 0.17s; }
+.confetti-piece:nth-child(15) { left: 94%; animation-delay: 0.04s; }
+.confetti-piece:nth-child(16) { left: 98%; animation-delay: 0.09s; }
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
 .overlay-content h3 {
   margin-top: 0;
   margin-bottom: 12px;
@@ -288,6 +341,10 @@
 
   .healthcheck-form {
     padding: var(--spacing-lg);
+  }
+
+  .progress-panel {
+    top: 86px;
   }
 
   .form-row {
