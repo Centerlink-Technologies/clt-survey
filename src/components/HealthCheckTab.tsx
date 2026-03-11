@@ -67,8 +67,6 @@ function getBudgetLabel(value: string): string {
 }
 
 export default function HealthCheckTab() {
-  const hasDismissedWelcome = typeof window !== 'undefined' && window.localStorage.getItem('clt-assessment-started') === 'true'
-
   const [formData, setFormData] = useState<FormData>({
     name: '',
     companyName: '',
@@ -106,7 +104,7 @@ export default function HealthCheckTab() {
 
   const [submitted, setSubmitted] = useState(false)
   const [showScheduleOverlay, setShowScheduleOverlay] = useState(false)
-  const [showWelcomeModal, setShowWelcomeModal] = useState(!hasDismissedWelcome)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true)
   const [showConfetti, setShowConfetti] = useState(false)
   const [assessmentDate, setAssessmentDate] = useState('')
   const [assessmentTime, setAssessmentTime] = useState('')
@@ -226,7 +224,6 @@ export default function HealthCheckTab() {
   }
 
   const handleStartAssessment = () => {
-    window.localStorage.setItem('clt-assessment-started', 'true')
     setShowWelcomeModal(false)
     setShowConfetti(true)
     setTimeout(() => setShowConfetti(false), 2000)
