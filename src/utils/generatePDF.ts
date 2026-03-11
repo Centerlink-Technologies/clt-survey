@@ -249,7 +249,7 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
       useCORS: true,
     })
 
-    // Create PDF with single page
+    // Create PDF (supports multi-page output when content is taller than one page)
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -257,11 +257,23 @@ export async function generateHealthCheckPDF(formData: FormData): Promise<void> 
     })
 
     const imgData = canvas.toDataURL('image/png')
-    const imgWidth = 210 // A4 width in mm
+    const pageWidth = 210
+    const pageHeight = 297
+    const imgWidth = pageWidth
     const imgHeight = (canvas.height * imgWidth) / canvas.width
-    
-    // Add single page (no multi-page logic)
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight)
+
+    let heightLeft = imgHeight
+    let position = 0
+
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+    heightLeft -= pageHeight
+
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight
+      pdf.addPage()
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+      heightLeft -= pageHeight
+    }
 
     // Download PDF
     pdf.save(`IT_Health_Check_Report_${formData.companyName}_${new Date().getTime()}.pdf`)
