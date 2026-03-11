@@ -66,13 +66,6 @@ function getBudgetLabel(value: string): string {
   return 'More than 20%'
 }
 
-function getMomentumMessage(progress: number): string {
-  if (progress >= 85) return 'Excellent momentum — you are almost done.'
-  if (progress >= 60) return 'Great progress — your score precision is improving.'
-  if (progress >= 35) return 'Nice start — each answer sharpens your recommendations.'
-  return 'Welcome — a few quick answers unlock your maturity report.'
-}
-
 export default function HealthCheckTab() {
   const hasDismissedWelcome = typeof window !== 'undefined' && window.localStorage.getItem('clt-assessment-started') === 'true'
 
@@ -243,8 +236,15 @@ export default function HealthCheckTab() {
     <section className="healthcheck-tab">
       {showConfetti && (
         <div className="confetti" aria-hidden="true">
-          {Array.from({ length: 16 }).map((_, i) => (
-            <span key={i} className="confetti-piece" />
+          {Array.from({ length: 64 }).map((_, i) => (
+            <span
+              key={i}
+              className="confetti-piece"
+              style={{
+                left: `${(i * 11) % 100}%`,
+                animationDelay: `${(i % 12) * 0.045}s`,
+              }}
+            />
           ))}
         </div>
       )}
@@ -267,9 +267,6 @@ export default function HealthCheckTab() {
 
       <div className="healthcheck-container">
         <h2>Cybersecurity Assessment</h2>
-        <p className="section-intro">
-          This interactive assessment estimates your maturity against regional manufacturing reference practices.
-        </p>
 
         <div className="progress-panel">
           <div className="progress-header">
@@ -279,7 +276,6 @@ export default function HealthCheckTab() {
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${progressPercent}%` }} />
           </div>
-          <p>{getMomentumMessage(progressPercent)}</p>
         </div>
 
         {submitted ? (
