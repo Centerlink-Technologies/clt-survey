@@ -252,9 +252,13 @@ export default function HealthCheckTab() {
             <div className="welcome-badge" aria-hidden="true">🏭✅</div>
             <h3 id="assessment-modal-title">Begin Your Assessment</h3>
             <p>
-              You are taking a strong first step. Complete this interactive assessment to receive a
-              benchmarked maturity report aligned to manufacturing-focused practices used in Northeast Ohio.
+              You are taking a strong first step. Here is what to expect:
             </p>
+            <ul style={{ margin: 0, paddingLeft: '18px', textAlign: 'left', fontSize: '14px', lineHeight: 1.5 }}>
+              <li>Complete a short assessment (about 2 minutes).</li>
+              <li>Get an immediate PDF report after submission.</li>
+              <li>Optionally schedule time with a Centerlink team member to review your report.</li>
+            </ul>
             <button type="button" className="submit-button" onClick={handleStartAssessment}>
               Start Assessment
             </button>
