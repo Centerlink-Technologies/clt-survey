@@ -67,6 +67,8 @@ function getBudgetLabel(value: string): string {
 }
 
 export default function HealthCheckTab() {
+  const baseUrl = import.meta.env.BASE_URL
+
   const [formData, setFormData] = useState<FormData>({
     name: '',
     companyName: '',
@@ -249,7 +251,7 @@ export default function HealthCheckTab() {
       {showWelcomeModal && (
         <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="assessment-modal-title">
           <div className="overlay-content welcome-overlay-content">
-            <div className="welcome-badge" aria-hidden="true">🏭✅</div>
+            <img src={`${baseUrl}centerlink-logo.svg`} alt="Centerlink Technologies" className="welcome-logo" />
             <h3 id="assessment-modal-title">Begin Your Assessment</h3>
             <p>
               You are taking a strong first step. Here is what to expect:
