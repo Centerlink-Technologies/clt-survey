@@ -816,7 +816,7 @@ export default function HealthCheckTab() {
               onChange={e => setAssessmentTime(e.target.value)}
             />
             <a
-              href="https://outlook.office.com/bookwithme/user/1a3066ec076a4e5e8c0a17cc8eb3f1bf@centerlinktech.com?anonymous&ep=bwmEmailSignature"
+              href="https://outlook.office.com/book/SalesTest@CenterLinkTech.onmicrosoft.com/?ismsaljsauthenabled"
               target="_blank"
               rel="noopener noreferrer"
               className="submit-button"
