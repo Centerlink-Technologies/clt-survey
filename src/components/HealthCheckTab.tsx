@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './HealthCheckTab.css'
 import { generateHealthCheckPDF } from '../utils/generatePDF'
+import { trackEvent, trackPageView } from '../utils/analytics'
 
 interface FormData {
   name: string
@@ -57,6 +58,8 @@ const REQUIRED_FIELDS: Array<keyof FormData> = [
   'timeline',
 ]
 
+const SURVEY_SESSION_KEY = 'clt_survey_session'
+
 function getBudgetLabel(value: string): string {
   const numeric = parseInt(value, 10)
   if (Number.isNaN(numeric)) return 'Not selected'
@@ -111,8 +114,98 @@ export default function HealthCheckTab() {
   const [assessmentDate, setAssessmentDate] = useState('')
   const [assessmentTime, setAssessmentTime] = useState('')
 
+  const hasStartedRef = useRef(false)
+  const hasSubmittedRef = useRef(false)
+  const trackedMilestonesRef = useRef<Record<number, boolean>>({
+    25: false,
+    50: false,
+    75: false,
+    100: false,
+  })
+
   const completedRequiredFields = REQUIRED_FIELDS.filter(field => formData[field]).length
   const progressPercent = Math.round((completedRequiredFields / REQUIRED_FIELDS.length) * 100)
+
+  useEffect(() => {
+    trackPageView(window.location.pathname, 'Cybersecurity Assessment')
+
+    const sessionRaw = localStorage.getItem(SURVEY_SESSION_KEY)
+    if (!sessionRaw) return
+
+    try {
+      const session = JSON.parse(sessionRaw) as {
+        started: boolean
+        submitted: boolean
+        lastProgressPercent: number
+        completedRequiredFields: number
+      }
+
+      if (session.started && !session.submitted) {
+        trackEvent('survey_abandoned_previous_session', {
+          last_progress_percent: session.lastProgressPercent,
+          completed_required_fields: session.completedRequiredFields,
+          total_required_fields: REQUIRED_FIELDS.length,
+        })
+      }
+    } catch {
+      // Ignore malformed local storage data.
+    }
+
+    localStorage.removeItem(SURVEY_SESSION_KEY)
+  }, [])
+
+  useEffect(() => {
+    if (completedRequiredFields <= 0 || hasStartedRef.current) return
+
+    hasStartedRef.current = true
+    trackEvent('survey_started', {
+      total_required_fields: REQUIRED_FIELDS.length,
+    })
+
+    localStorage.setItem(SURVEY_SESSION_KEY, JSON.stringify({
+      started: true,
+      submitted: false,
+      lastProgressPercent: progressPercent,
+      completedRequiredFields,
+    }))
+  }, [completedRequiredFields, progressPercent])
+
+  useEffect(() => {
+    if (!hasStartedRef.current || hasSubmittedRef.current) return
+
+    localStorage.setItem(SURVEY_SESSION_KEY, JSON.stringify({
+      started: true,
+      submitted: false,
+      lastProgressPercent: progressPercent,
+      completedRequiredFields,
+    }))
+
+    for (const milestone of [25, 50, 75, 100]) {
+      if (progressPercent >= milestone && !trackedMilestonesRef.current[milestone]) {
+        trackedMilestonesRef.current[milestone] = true
+        trackEvent('survey_progress_milestone', {
+          milestone_percent: milestone,
+          progress_percent: progressPercent,
+          completed_required_fields: completedRequiredFields,
+        })
+      }
+    }
+  }, [completedRequiredFields, progressPercent])
+
+  useEffect(() => {
+    const handlePageHide = () => {
+      if (!hasStartedRef.current || hasSubmittedRef.current) return
+
+      trackEvent('survey_abandoned', {
+        progress_percent: progressPercent,
+        completed_required_fields: completedRequiredFields,
+        total_required_fields: REQUIRED_FIELDS.length,
+      })
+    }
+
+    window.addEventListener('pagehide', handlePageHide)
+    return () => window.removeEventListener('pagehide', handlePageHide)
+  }, [completedRequiredFields, progressPercent])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -168,6 +261,14 @@ export default function HealthCheckTab() {
       const result = await response.json()
 
       if (response.ok) {
+        hasSubmittedRef.current = true
+        localStorage.removeItem(SURVEY_SESSION_KEY)
+        trackEvent('survey_submitted', {
+          progress_percent: progressPercent,
+          completed_required_fields: completedRequiredFields,
+          total_required_fields: REQUIRED_FIELDS.length,
+        })
+
         // Generate and download PDF
         try {
           await generateHealthCheckPDF(formData)
@@ -217,10 +318,18 @@ export default function HealthCheckTab() {
         }, 4000)
       } else {
         console.error('Formspree error:', result)
+        trackEvent('survey_submit_failed', {
+          reason: 'formspree_non_2xx',
+          progress_percent: progressPercent,
+        })
         alert('Error submitting form. Please try again.')
       }
     } catch (error) {
       console.error('Form submission error:', error)
+      trackEvent('survey_submit_failed', {
+        reason: 'network_or_runtime_error',
+        progress_percent: progressPercent,
+      })
       alert('Error submitting form. Please try again.')
     }
   }
