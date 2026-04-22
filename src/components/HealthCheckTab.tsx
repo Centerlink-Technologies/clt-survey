@@ -404,10 +404,6 @@ export default function HealthCheckTab() {
           </div>
         </div>
 
-        <p className="assessment-guidance">
-          Start with the core questions first. Advanced security questions are collapsed below so the form feels faster and easier to complete.
-        </p>
-
         {submitted ? (
           <div className="overlay">
             <div className="overlay-content">
@@ -599,10 +595,7 @@ export default function HealthCheckTab() {
               )}
             </div>
 
-            {/* Advanced Security Assessment */}
-            <details className="advanced-assessment">
-              <summary>Advanced Security Assessment (optional)</summary>
-              <div className="advanced-assessment-content">
+            {/* Security Assessment */}
 
             <div className="form-group">
               <label htmlFor="dedicatedSecurityTeam"><strong>Do you have a dedicated IT security team or person?</strong></label>
@@ -884,9 +877,6 @@ export default function HealthCheckTab() {
                 </div>
               )}
             </div>
-
-              </div>
-            </details>
 
             <div className="form-group">
               <label htmlFor="securityAwareness"><strong>Does your organization conduct cybersecurity awareness training for all employees?</strong></label>

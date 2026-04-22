@@ -62,16 +62,6 @@
   border: 1px solid var(--color-border);
 }
 
-.assessment-guidance {
-  margin: 0 0 var(--spacing-lg);
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid #d8e4fb;
-  background: #f7faff;
-  color: var(--color-gray-dark);
-  font-size: var(--font-size-sm);
-}
-
 .form-group {
   margin-bottom: calc(var(--spacing-lg) + 4px);
 }
@@ -168,46 +158,6 @@
   margin-bottom: var(--spacing-md);
   padding-bottom: var(--spacing-sm);
   border-bottom: 2px solid var(--color-primary-light);
-}
-
-.advanced-assessment {
-  margin-top: calc(var(--spacing-xl) + 4px);
-  margin-bottom: var(--spacing-md);
-  border: 1px solid #d6e6ff;
-  border-radius: 8px;
-  background: #f9fbff;
-  padding: 10px 14px 8px;
-}
-
-.advanced-assessment summary {
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  color: var(--color-primary);
-  cursor: pointer;
-  list-style: none;
-  padding: 2px 0;
-}
-
-.advanced-assessment summary::-webkit-details-marker {
-  display: none;
-}
-
-.advanced-assessment summary::before {
-  content: '+';
-  display: inline-block;
-  width: 18px;
-  color: var(--color-primary);
-  font-weight: 700;
-}
-
-.advanced-assessment[open] summary::before {
-  content: '-';
-}
-
-.advanced-assessment-content {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid #dce8ff;
 }
 
 .submit-actions {
