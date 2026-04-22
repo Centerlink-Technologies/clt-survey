@@ -43,20 +43,23 @@ const REQUIRED_FIELDS: Array<keyof FormData> = [
   'email',
   'employees',
   'yearsWithCurrentSystem',
-  'downtime',
   'productionVisibility',
-  'integrationNeeds',
   'formalCybersecurityPolicy',
   'riskAssessments',
   'disasterRecoveryPlan',
-  'mfaCoverage',
-  'edrLoggingCoverage',
-  'patchCadence',
-  'itOtSegmentation',
-  'immutableBackups',
-  'incidentRunbooks',
   'timeline',
 ]
+
+const QUESTION_VISIBILITY = {
+  downtime: false,
+  integrationNeeds: false,
+  itOtSegmentation: false,
+  incidentRunbooks: false,
+  supplyChainRiskProgram: false,
+  encryptionCoverage: false,
+  phishingExercises: false,
+  cybersecurityBudgetPercentage: false,
+} as const
 
 const SURVEY_SESSION_KEY = 'clt_survey_session'
 
@@ -215,8 +218,17 @@ export default function HealthCheckTab() {
     }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    const submitEvent = e.nativeEvent as SubmitEvent
+    const submitter = submitEvent.submitter as HTMLButtonElement | null
+    const submissionMode = submitter?.value === 'partial' ? 'partial' : 'full'
+
+    if (submissionMode === 'partial') {
+      const confirmed = window.confirm('Submit the assessment with partial answers? You can still provide complete details later.')
+      if (!confirmed) return
+    }
     
     try {
       // Prepare data as JSON
@@ -246,6 +258,7 @@ export default function HealthCheckTab() {
         'incident_runbooks': formData.incidentRunbooks,
         'encryption_coverage': formData.encryptionCoverage,
         'supply_chain_risk_program': formData.supplyChainRiskProgram,
+        'submission_mode': submissionMode,
       }
 
       // Submit to Formspree
@@ -264,6 +277,7 @@ export default function HealthCheckTab() {
         hasSubmittedRef.current = true
         localStorage.removeItem(SURVEY_SESSION_KEY)
         trackEvent('survey_submitted', {
+          submission_mode: submissionMode,
           progress_percent: progressPercent,
           completed_required_fields: completedRequiredFields,
           total_required_fields: REQUIRED_FIELDS.length,
@@ -389,6 +403,10 @@ export default function HealthCheckTab() {
             <div className="progress-fill" style={{ width: `${progressPercent}%` }} />
           </div>
         </div>
+
+        <p className="assessment-guidance">
+          Start with the core questions first. Advanced security questions are collapsed below so the form feels faster and easier to complete.
+        </p>
 
         {submitted ? (
           <div className="overlay">
@@ -525,20 +543,22 @@ export default function HealthCheckTab() {
               <div className="slider-caption">Current selection: {formData.yearsWithCurrentSystem || '6'} years</div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="downtime"><strong>Estimated unplanned downtime per month (%)</strong></label>
-              <input
-                type="range"
-                id="downtime"
-                name="downtime"
-                min="0"
-                max="20"
-                step="0.5"
-                value={formData.downtime || '3'}
-                onChange={handleChange}
-              />
-              <div className="slider-caption">Current selection: {formData.downtime || '3'}%</div>
-            </div>
+            {QUESTION_VISIBILITY.downtime && (
+              <div className="form-group">
+                <label htmlFor="downtime"><strong>Estimated unplanned downtime per month (%)</strong></label>
+                <input
+                  type="range"
+                  id="downtime"
+                  name="downtime"
+                  min="0"
+                  max="20"
+                  step="0.5"
+                  value={formData.downtime || '3'}
+                  onChange={handleChange}
+                />
+                <div className="slider-caption">Current selection: {formData.downtime || '3'}%</div>
+              </div>
+            )}
 
             {/* Operations & Visibility */}
             <div className="form-section-title">Operations & Visibility</div>
@@ -560,25 +580,29 @@ export default function HealthCheckTab() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="integrationNeeds"><strong>How integrated are your manufacturing systems?</strong></label>
-                <select
-                  id="integrationNeeds"
-                  name="integrationNeeds"
-                  value={formData.integrationNeeds}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="siloed">Siloed (systems don't communicate)</option>
-                  <option value="partial">Partially integrated (some connection)</option>
-                  <option value="mostly">Mostly integrated (flow is good)</option>
-                  <option value="fully">Fully integrated (end-to-end)</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.integrationNeeds && (
+                <div className="form-group">
+                  <label htmlFor="integrationNeeds"><strong>How integrated are your manufacturing systems?</strong></label>
+                  <select
+                    id="integrationNeeds"
+                    name="integrationNeeds"
+                    value={formData.integrationNeeds}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="siloed">Siloed (systems don't communicate)</option>
+                    <option value="partial">Partially integrated (some connection)</option>
+                    <option value="mostly">Mostly integrated (flow is good)</option>
+                    <option value="fully">Fully integrated (end-to-end)</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             {/* Advanced Security Assessment */}
-            <div className="form-section-title">Advanced Security Assessment</div>
+            <details className="advanced-assessment">
+              <summary>Advanced Security Assessment (optional)</summary>
+              <div className="advanced-assessment-content">
 
             <div className="form-group">
               <label htmlFor="dedicatedSecurityTeam"><strong>Do you have a dedicated IT security team or person?</strong></label>
@@ -647,21 +671,23 @@ export default function HealthCheckTab() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="itOtSegmentation"><strong>IT/OT network segmentation status</strong></label>
-                <select
-                  id="itOtSegmentation"
-                  name="itOtSegmentation"
-                  value={formData.itOtSegmentation}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="strong">Documented segmentation with managed zones</option>
-                  <option value="partial">Partial segmentation in key areas</option>
-                  <option value="minimal">Basic VLAN separation only</option>
-                  <option value="none">Flat network / no OT segmentation</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.itOtSegmentation && (
+                <div className="form-group">
+                  <label htmlFor="itOtSegmentation"><strong>IT/OT network segmentation status</strong></label>
+                  <select
+                    id="itOtSegmentation"
+                    name="itOtSegmentation"
+                    value={formData.itOtSegmentation}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="strong">Documented segmentation with managed zones</option>
+                    <option value="partial">Partial segmentation in key areas</option>
+                    <option value="minimal">Basic VLAN separation only</option>
+                    <option value="none">Flat network / no OT segmentation</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             <div className="form-row">
@@ -681,55 +707,61 @@ export default function HealthCheckTab() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="incidentRunbooks"><strong>Incident response runbooks and exercises</strong></label>
-                <select
-                  id="incidentRunbooks"
-                  name="incidentRunbooks"
-                  value={formData.incidentRunbooks}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="documented-tested">Documented and tested at least annually</option>
-                  <option value="documented-untested">Documented but not exercised regularly</option>
-                  <option value="informal">Informal tribal-knowledge response only</option>
-                  <option value="none">No runbooks in place</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.incidentRunbooks && (
+                <div className="form-group">
+                  <label htmlFor="incidentRunbooks"><strong>Incident response runbooks and exercises</strong></label>
+                  <select
+                    id="incidentRunbooks"
+                    name="incidentRunbooks"
+                    value={formData.incidentRunbooks}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="documented-tested">Documented and tested at least annually</option>
+                    <option value="documented-untested">Documented but not exercised regularly</option>
+                    <option value="informal">Informal tribal-knowledge response only</option>
+                    <option value="none">No runbooks in place</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="encryptionCoverage"><strong>Encryption coverage for sensitive data</strong></label>
-                <select
-                  id="encryptionCoverage"
-                  name="encryptionCoverage"
-                  value={formData.encryptionCoverage}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="broad">At rest + in transit across critical systems</option>
-                  <option value="partial">Partial encryption by system or use case</option>
-                  <option value="minimal">Limited encryption controls</option>
-                  <option value="none">No formal encryption standard</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.encryptionCoverage && (
+                <div className="form-group">
+                  <label htmlFor="encryptionCoverage"><strong>Encryption coverage for sensitive data</strong></label>
+                  <select
+                    id="encryptionCoverage"
+                    name="encryptionCoverage"
+                    value={formData.encryptionCoverage}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="broad">At rest + in transit across critical systems</option>
+                    <option value="partial">Partial encryption by system or use case</option>
+                    <option value="minimal">Limited encryption controls</option>
+                    <option value="none">No formal encryption standard</option>
+                  </select>
+                </div>
+              )}
 
-              <div className="form-group">
-                <label htmlFor="supplyChainRiskProgram"><strong>Supplier / third-party cyber risk management</strong></label>
-                <select
-                  id="supplyChainRiskProgram"
-                  name="supplyChainRiskProgram"
-                  value={formData.supplyChainRiskProgram}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="formal">Formal vendor risk reviews and contract controls</option>
-                  <option value="partial">Reviews for critical suppliers only</option>
-                  <option value="informal">Informal checks, no consistent standard</option>
-                  <option value="none">No supplier cyber risk process</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.supplyChainRiskProgram && (
+                <div className="form-group">
+                  <label htmlFor="supplyChainRiskProgram"><strong>Supplier / third-party cyber risk management</strong></label>
+                  <select
+                    id="supplyChainRiskProgram"
+                    name="supplyChainRiskProgram"
+                    value={formData.supplyChainRiskProgram}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="formal">Formal vendor risk reviews and contract controls</option>
+                    <option value="partial">Reviews for critical suppliers only</option>
+                    <option value="informal">Informal checks, no consistent standard</option>
+                    <option value="none">No supplier cyber risk process</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             <div className="form-group">
@@ -798,22 +830,24 @@ export default function HealthCheckTab() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="cybersecurityBudgetPercentage"><strong>What percentage of your IT budget is allocated to cybersecurity?</strong></label>
-                <input
-                  type="range"
-                  id="cybersecurityBudgetPercentage"
-                  name="cybersecurityBudgetPercentage"
-                  min="0"
-                  max="25"
-                  step="1"
-                  value={formData.cybersecurityBudgetPercentage || '8'}
-                  onChange={handleChange}
-                />
-                <div className="slider-caption">
-                  Current allocation: {formData.cybersecurityBudgetPercentage || '8'}% ({getBudgetLabel(formData.cybersecurityBudgetPercentage || '8')})
+              {QUESTION_VISIBILITY.cybersecurityBudgetPercentage && (
+                <div className="form-group">
+                  <label htmlFor="cybersecurityBudgetPercentage"><strong>What percentage of your IT budget is allocated to cybersecurity?</strong></label>
+                  <input
+                    type="range"
+                    id="cybersecurityBudgetPercentage"
+                    name="cybersecurityBudgetPercentage"
+                    min="0"
+                    max="25"
+                    step="1"
+                    value={formData.cybersecurityBudgetPercentage || '8'}
+                    onChange={handleChange}
+                  />
+                  <div className="slider-caption">
+                    Current allocation: {formData.cybersecurityBudgetPercentage || '8'}% ({getBudgetLabel(formData.cybersecurityBudgetPercentage || '8')})
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="form-row">
@@ -833,21 +867,26 @@ export default function HealthCheckTab() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="phishingExercises"><strong>Do you run simulated phishing exercises?</strong></label>
-                <select
-                  id="phishingExercises"
-                  name="phishingExercises"
-                  value={formData.phishingExercises}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="regularly">Yes, regularly (monthly or quarterly)</option>
-                  <option value="occasionally">Yes, occasionally</option>
-                  <option value="no">No</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.phishingExercises && (
+                <div className="form-group">
+                  <label htmlFor="phishingExercises"><strong>Do you run simulated phishing exercises?</strong></label>
+                  <select
+                    id="phishingExercises"
+                    name="phishingExercises"
+                    value={formData.phishingExercises}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="regularly">Yes, regularly (monthly or quarterly)</option>
+                    <option value="occasionally">Yes, occasionally</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+              )}
             </div>
+
+              </div>
+            </details>
 
             <div className="form-group">
               <label htmlFor="securityAwareness"><strong>Does your organization conduct cybersecurity awareness training for all employees?</strong></label>
@@ -908,7 +947,10 @@ export default function HealthCheckTab() {
               />
             </div>
 
-            <button type="submit" className="submit-button">Submit Cybersecurity Assessment</button>
+            <div className="submit-actions">
+              <button type="submit" className="submit-button" value="full">Submit Cybersecurity Assessment</button>
+              <button type="submit" className="submit-button submit-button-secondary" value="partial">Submit What I've Completed</button>
+            </div>
           </form>
         )}
       </div>

@@ -44,7 +44,6 @@ export default function CaseStudiesTab() {
       result: 'Zero security incidents in 12 months, 30% improvement in employee satisfaction scores'
     }
   ]
-    const baseUrl = import.meta.env.BASE_URL
 
   const testimonials: Testimonial[] = [
     {
@@ -81,12 +80,12 @@ export default function CaseStudiesTab() {
               <p className="attribution">— {testimonial.author}, {testimonial.title}<br />{testimonial.company}</p>
               {testimonial.id === 1 && (
                 <div className="testimonial-logo">
-                    <img src={`${baseUrl}coltene-logo.svg`} alt="Coltene" />
+                  <img src="/clt-survey/coltene-logo.svg" alt="Coltene" />
                 </div>
               )}
               {testimonial.id === 3 && (
                 <div className="testimonial-logo">
-                    <img src={`${baseUrl}first-tee-logo.svg`} alt="First Tee Greater Akron" />
+                  <img src="/clt-survey/first-tee-logo.svg" alt="First Tee Greater Akron" />
                 </div>
               )}
             </div>
