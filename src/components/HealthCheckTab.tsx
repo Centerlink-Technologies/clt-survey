@@ -43,16 +43,17 @@ const REQUIRED_FIELDS: Array<keyof FormData> = [
   'email',
   'employees',
   'yearsWithCurrentSystem',
-  'productionVisibility',
   'formalCybersecurityPolicy',
   'riskAssessments',
   'disasterRecoveryPlan',
-  'timeline',
 ]
 
 const QUESTION_VISIBILITY = {
   downtime: false,
+  productionVisibility: false,
   integrationNeeds: false,
+  edrLoggingCoverage: false,
+  patchCadence: false,
   itOtSegmentation: false,
   incidentRunbooks: false,
   supplyChainRiskProgram: false,
@@ -116,6 +117,7 @@ export default function HealthCheckTab() {
   const [showConfetti, setShowConfetti] = useState(false)
   const [assessmentDate, setAssessmentDate] = useState('')
   const [assessmentTime, setAssessmentTime] = useState('')
+  const [includeBusinessPriorities, setIncludeBusinessPriorities] = useState(false)
 
   const hasStartedRef = useRef(false)
   const hasSubmittedRef = useRef(false)
@@ -556,44 +558,50 @@ export default function HealthCheckTab() {
               </div>
             )}
 
-            {/* Operations & Visibility */}
-            <div className="form-section-title">Operations & Visibility</div>
+            {(QUESTION_VISIBILITY.productionVisibility || QUESTION_VISIBILITY.integrationNeeds) && (
+              <>
+                {/* Operations & Visibility */}
+                <div className="form-section-title">Operations & Visibility</div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="productionVisibility"><strong>How well can you track real-time production metrics?</strong></label>
-                <select
-                  id="productionVisibility"
-                  name="productionVisibility"
-                  value={formData.productionVisibility}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="manual">Manual tracking (spreadsheets, paper)</option>
-                  <option value="partial">Partial visibility (some systems integrated)</option>
-                  <option value="good">Good visibility (dashboard available)</option>
-                  <option value="excellent">Excellent (real-time, automated insights)</option>
-                </select>
-              </div>
+                <div className="form-row">
+                  {QUESTION_VISIBILITY.productionVisibility && (
+                    <div className="form-group">
+                      <label htmlFor="productionVisibility"><strong>How well can you track real-time production metrics?</strong></label>
+                      <select
+                        id="productionVisibility"
+                        name="productionVisibility"
+                        value={formData.productionVisibility}
+                        onChange={handleChange}
+                      >
+                        <option value="">Select...</option>
+                        <option value="manual">Manual tracking (spreadsheets, paper)</option>
+                        <option value="partial">Partial visibility (some systems integrated)</option>
+                        <option value="good">Good visibility (dashboard available)</option>
+                        <option value="excellent">Excellent (real-time, automated insights)</option>
+                      </select>
+                    </div>
+                  )}
 
-              {QUESTION_VISIBILITY.integrationNeeds && (
-                <div className="form-group">
-                  <label htmlFor="integrationNeeds"><strong>How integrated are your manufacturing systems?</strong></label>
-                  <select
-                    id="integrationNeeds"
-                    name="integrationNeeds"
-                    value={formData.integrationNeeds}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select...</option>
-                    <option value="siloed">Siloed (systems don't communicate)</option>
-                    <option value="partial">Partially integrated (some connection)</option>
-                    <option value="mostly">Mostly integrated (flow is good)</option>
-                    <option value="fully">Fully integrated (end-to-end)</option>
-                  </select>
+                  {QUESTION_VISIBILITY.integrationNeeds && (
+                    <div className="form-group">
+                      <label htmlFor="integrationNeeds"><strong>How integrated are your manufacturing systems?</strong></label>
+                      <select
+                        id="integrationNeeds"
+                        name="integrationNeeds"
+                        value={formData.integrationNeeds}
+                        onChange={handleChange}
+                      >
+                        <option value="">Select...</option>
+                        <option value="siloed">Siloed (systems don't communicate)</option>
+                        <option value="partial">Partially integrated (some connection)</option>
+                        <option value="mostly">Mostly integrated (flow is good)</option>
+                        <option value="fully">Fully integrated (end-to-end)</option>
+                      </select>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
 
             {/* Security Assessment */}
 
@@ -630,39 +638,43 @@ export default function HealthCheckTab() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="edrLoggingCoverage"><strong>EDR and centralized logging maturity</strong></label>
-                <select
-                  id="edrLoggingCoverage"
-                  name="edrLoggingCoverage"
-                  value={formData.edrLoggingCoverage}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="full">Plant + enterprise coverage with active monitoring</option>
-                  <option value="partial">Coverage on critical systems only</option>
-                  <option value="minimal">Basic AV/logs, limited correlation</option>
-                  <option value="none">No formal EDR/SIEM visibility</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.edrLoggingCoverage && (
+                <div className="form-group">
+                  <label htmlFor="edrLoggingCoverage"><strong>EDR and centralized logging maturity</strong></label>
+                  <select
+                    id="edrLoggingCoverage"
+                    name="edrLoggingCoverage"
+                    value={formData.edrLoggingCoverage}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="full">Plant + enterprise coverage with active monitoring</option>
+                    <option value="partial">Coverage on critical systems only</option>
+                    <option value="minimal">Basic AV/logs, limited correlation</option>
+                    <option value="none">No formal EDR/SIEM visibility</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="patchCadence"><strong>Security patching cadence for IT/OT systems</strong></label>
-                <select
-                  id="patchCadence"
-                  name="patchCadence"
-                  value={formData.patchCadence}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="monthly">Monthly cadence with exception tracking</option>
-                  <option value="quarterly">Quarterly windows with partial tracking</option>
-                  <option value="ad-hoc">Ad-hoc patching when issues arise</option>
-                  <option value="rarely">Rarely patched / vendor driven only</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.patchCadence && (
+                <div className="form-group">
+                  <label htmlFor="patchCadence"><strong>Security patching cadence for IT/OT systems</strong></label>
+                  <select
+                    id="patchCadence"
+                    name="patchCadence"
+                    value={formData.patchCadence}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="monthly">Monthly cadence with exception tracking</option>
+                    <option value="quarterly">Quarterly windows with partial tracking</option>
+                    <option value="ad-hoc">Ad-hoc patching when issues arise</option>
+                    <option value="rarely">Rarely patched / vendor driven only</option>
+                  </select>
+                </div>
+              )}
 
               {QUESTION_VISIBILITY.itOtSegmentation && (
                 <div className="form-group">
@@ -894,48 +906,64 @@ export default function HealthCheckTab() {
               </select>
             </div>
 
-            {/* Business Needs */}
-            <div className="form-section-title">Business Priorities</div>
-
-            <div className="form-group">
-              <label htmlFor="mainPainPoints"><strong>What's your #1 IT pain point right now?</strong></label>
-              <textarea
-                id="mainPainPoints"
-                name="mainPainPoints"
-                value={formData.mainPainPoints}
-                onChange={handleChange}
-                rows={3}
-                placeholder="e.g., Systems going down too often, can't see production in real-time, security concerns..."
-              />
+            <div className="business-priorities-toggle">
+              <label className="checkbox-label" htmlFor="includeBusinessPriorities">
+                <input
+                  type="checkbox"
+                  id="includeBusinessPriorities"
+                  checked={includeBusinessPriorities}
+                  onChange={e => setIncludeBusinessPriorities(e.target.checked)}
+                />
+                <span>Add Business Priorities (optional)</span>
+              </label>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="timeline"><strong>When would you like to address IT challenges?</strong></label>
-              <select
-                id="timeline"
-                name="timeline"
-                value={formData.timeline}
-                onChange={handleChange}
-              >
-                <option value="">Select...</option>
-                <option value="immediate">Immediate (critical issue)</option>
-                <option value="30days">Next 30 days</option>
-                <option value="quarter">Next quarter</option>
-                <option value="exploring">Just exploring options</option>
-              </select>
-            </div>
+            {includeBusinessPriorities && (
+              <>
+                {/* Business Needs */}
+                <div className="form-section-title">Business Priorities</div>
 
-            <div className="form-group">
-              <label htmlFor="additionalNotes"><strong>Any additional context or concerns?</strong></label>
-              <textarea
-                id="additionalNotes"
-                name="additionalNotes"
-                value={formData.additionalNotes}
-                onChange={handleChange}
-                rows={2}
-                placeholder="Optional: Help us understand your unique situation..."
-              />
-            </div>
+                <div className="form-group">
+                  <label htmlFor="mainPainPoints"><strong>What's your #1 IT pain point right now?</strong></label>
+                  <textarea
+                    id="mainPainPoints"
+                    name="mainPainPoints"
+                    value={formData.mainPainPoints}
+                    onChange={handleChange}
+                    rows={3}
+                    placeholder="e.g., Systems going down too often, can't see production in real-time, security concerns..."
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="timeline"><strong>When would you like to address IT challenges?</strong></label>
+                  <select
+                    id="timeline"
+                    name="timeline"
+                    value={formData.timeline}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="immediate">Immediate (critical issue)</option>
+                    <option value="30days">Next 30 days</option>
+                    <option value="quarter">Next quarter</option>
+                    <option value="exploring">Just exploring options</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="additionalNotes"><strong>Any additional context or concerns?</strong></label>
+                  <textarea
+                    id="additionalNotes"
+                    name="additionalNotes"
+                    value={formData.additionalNotes}
+                    onChange={handleChange}
+                    rows={2}
+                    placeholder="Optional: Help us understand your unique situation..."
+                  />
+                </div>
+              </>
+            )}
 
             <div className="submit-actions">
               <button type="submit" className="submit-button" value="full">Submit Cybersecurity Assessment</button>

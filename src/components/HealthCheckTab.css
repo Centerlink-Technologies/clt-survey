@@ -167,6 +167,15 @@
   margin-top: 6px;
 }
 
+.business-priorities-toggle {
+  margin-top: calc(var(--spacing-xl) + 4px);
+  margin-bottom: var(--spacing-md);
+  padding: 12px 14px;
+  border: 1px solid #d6e6ff;
+  border-radius: 8px;
+  background: #f8fbff;
+}
+
 .submit-button-secondary {
   background-color: #e8eef8;
   color: #0b2f66;
