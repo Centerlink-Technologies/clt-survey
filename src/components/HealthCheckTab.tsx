@@ -43,7 +43,6 @@ const REQUIRED_FIELDS: Array<keyof FormData> = [
   'email',
   'employees',
   'yearsWithCurrentSystem',
-  'formalCybersecurityPolicy',
   'riskAssessments',
   'disasterRecoveryPlan',
 ]
@@ -60,6 +59,10 @@ const QUESTION_VISIBILITY = {
   encryptionCoverage: false,
   phishingExercises: false,
   cybersecurityBudgetPercentage: false,
+  mfaCoverage: false,
+  immutableBackups: false,
+  formalCybersecurityPolicy: false,
+  breachDetectionConfidence: false,
 } as const
 
 const SURVEY_SESSION_KEY = 'clt_survey_session'
@@ -622,21 +625,23 @@ export default function HealthCheckTab() {
             </div>
 
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="mfaCoverage"><strong>MFA coverage across workforce and privileged accounts</strong></label>
-                <select
-                  id="mfaCoverage"
-                  name="mfaCoverage"
-                  value={formData.mfaCoverage}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="full">Enabled for nearly all users/admin access</option>
-                  <option value="partial">Enabled for some users/systems</option>
-                  <option value="pilot">Pilot or limited rollout</option>
-                  <option value="none">Not in place</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.mfaCoverage && (
+                <div className="form-group">
+                  <label htmlFor="mfaCoverage"><strong>MFA coverage across workforce and privileged accounts</strong></label>
+                  <select
+                    id="mfaCoverage"
+                    name="mfaCoverage"
+                    value={formData.mfaCoverage}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="full">Enabled for nearly all users/admin access</option>
+                    <option value="partial">Enabled for some users/systems</option>
+                    <option value="pilot">Pilot or limited rollout</option>
+                    <option value="none">Not in place</option>
+                  </select>
+                </div>
+              )}
 
               {QUESTION_VISIBILITY.edrLoggingCoverage && (
                 <div className="form-group">
@@ -696,21 +701,23 @@ export default function HealthCheckTab() {
             </div>
 
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="immutableBackups"><strong>Backup strategy and immutability</strong></label>
-                <select
-                  id="immutableBackups"
-                  name="immutableBackups"
-                  value={formData.immutableBackups}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="tested-immutable">Immutable backups with restore testing</option>
-                  <option value="immutable-untested">Immutable backups, limited restore drills</option>
-                  <option value="traditional">Traditional backups only</option>
-                  <option value="none">No reliable backup posture</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.immutableBackups && (
+                <div className="form-group">
+                  <label htmlFor="immutableBackups"><strong>Backup strategy and immutability</strong></label>
+                  <select
+                    id="immutableBackups"
+                    name="immutableBackups"
+                    value={formData.immutableBackups}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="tested-immutable">Immutable backups with restore testing</option>
+                    <option value="immutable-untested">Immutable backups, limited restore drills</option>
+                    <option value="traditional">Traditional backups only</option>
+                    <option value="none">No reliable backup posture</option>
+                  </select>
+                </div>
+              )}
 
               {QUESTION_VISIBILITY.incidentRunbooks && (
                 <div className="form-group">
@@ -769,21 +776,23 @@ export default function HealthCheckTab() {
               )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="formalCybersecurityPolicy"><strong>Does your organization have a formal, documented cybersecurity policy?</strong></label>
-              <select
-                id="formalCybersecurityPolicy"
-                name="formalCybersecurityPolicy"
-                value={formData.formalCybersecurityPolicy}
-                onChange={handleChange}
-              >
-                <option value="">Select...</option>
-                <option value="Yes, comprehensive policy">Yes, comprehensive policy</option>
-                <option value="Yes, basic policy">Yes, basic policy</option>
-                <option value="In development">In development</option>
-                <option value="No">No</option>
-              </select>
-            </div>
+            {QUESTION_VISIBILITY.formalCybersecurityPolicy && (
+              <div className="form-group">
+                <label htmlFor="formalCybersecurityPolicy"><strong>Does your organization have a formal, documented cybersecurity policy?</strong></label>
+                <select
+                  id="formalCybersecurityPolicy"
+                  name="formalCybersecurityPolicy"
+                  value={formData.formalCybersecurityPolicy}
+                  onChange={handleChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="Yes, comprehensive policy">Yes, comprehensive policy</option>
+                  <option value="Yes, basic policy">Yes, basic policy</option>
+                  <option value="In development">In development</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+            )}
 
             <div className="form-group">
               <label htmlFor="riskAssessments"><strong>Do you conduct regular risk assessments of your IT infrastructure? If so, how often?</strong></label>
@@ -818,22 +827,24 @@ export default function HealthCheckTab() {
             </div>
 
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="breachDetectionConfidence"><strong>How confident are you in your team's ability to detect a breach within 24 hours?</strong></label>
-                <input
-                  type="range"
-                  id="breachDetectionConfidence"
-                  name="breachDetectionConfidence"
-                  min="1"
-                  max="5"
-                  step="1"
-                  value={formData.breachDetectionConfidence || '2'}
-                  onChange={handleChange}
-                />
-                <div className="slider-caption">
-                  Confidence level: {formData.breachDetectionConfidence || '2'} / 5
+              {QUESTION_VISIBILITY.breachDetectionConfidence && (
+                <div className="form-group">
+                  <label htmlFor="breachDetectionConfidence"><strong>How confident are you in your team's ability to detect a breach within 24 hours?</strong></label>
+                  <input
+                    type="range"
+                    id="breachDetectionConfidence"
+                    name="breachDetectionConfidence"
+                    min="1"
+                    max="5"
+                    step="1"
+                    value={formData.breachDetectionConfidence || '2'}
+                    onChange={handleChange}
+                  />
+                  <div className="slider-caption">
+                    Confidence level: {formData.breachDetectionConfidence || '2'} / 5
+                  </div>
                 </div>
-              </div>
+              )}
 
               {QUESTION_VISIBILITY.cybersecurityBudgetPercentage && (
                 <div className="form-group">

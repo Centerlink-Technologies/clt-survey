@@ -18,6 +18,10 @@ Change any value from false to true to show that question again.
 - encryptionCoverage: Encryption coverage for sensitive data
 - phishingExercises: Do you run simulated phishing exercises?
 - cybersecurityBudgetPercentage: What percentage of your IT budget is allocated to cybersecurity?
+- mfaCoverage: MFA coverage across workforce and privileged accounts
+- immutableBackups: Backup strategy and immutability
+- formalCybersecurityPolicy: Does your organization have a formal, documented cybersecurity policy?
+- breachDetectionConfidence: How confident are you in your team's ability to detect a breach within 24 hours?
 
 ## Example
 
