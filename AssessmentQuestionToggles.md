@@ -22,6 +22,8 @@ Change any value from false to true to show that question again.
 - immutableBackups: Backup strategy and immutability
 - formalCybersecurityPolicy: Does your organization have a formal, documented cybersecurity policy?
 - breachDetectionConfidence: How confident are you in your team's ability to detect a breach within 24 hours?
+- disasterRecoveryPlan: Does your company have a disaster recovery plan?
+- cybersecurityIncident: Has your organization experienced a cybersecurity incident in the past 24 months? (ransomware, data breach, phishing attack, etc.)
 
 ## Example
 

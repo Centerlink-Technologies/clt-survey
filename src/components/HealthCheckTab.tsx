@@ -44,7 +44,6 @@ const REQUIRED_FIELDS: Array<keyof FormData> = [
   'employees',
   'yearsWithCurrentSystem',
   'riskAssessments',
-  'disasterRecoveryPlan',
 ]
 
 const QUESTION_VISIBILITY = {
@@ -63,6 +62,8 @@ const QUESTION_VISIBILITY = {
   immutableBackups: false,
   formalCybersecurityPolicy: false,
   breachDetectionConfidence: false,
+  disasterRecoveryPlan: false,
+  cybersecurityIncident: false,
 } as const
 
 const SURVEY_SESSION_KEY = 'clt_survey_session'
@@ -810,21 +811,23 @@ export default function HealthCheckTab() {
               </select>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="cybersecurityIncident"><strong>Has your organization experienced a cybersecurity incident in the past 24 months? (ransomware, data breach, phishing attack, etc.)</strong></label>
-              <select
-                id="cybersecurityIncident"
-                name="cybersecurityIncident"
-                value={formData.cybersecurityIncident}
-                onChange={handleChange}
-              >
-                <option value="">Select...</option>
-                <option value="Yes, significant incident">Yes, significant incident</option>
-                <option value="Yes, minor incident">Yes, minor incident</option>
-                <option value="Suspicious activity detected">Suspicious activity detected</option>
-                <option value="No">No</option>
-              </select>
-            </div>
+            {QUESTION_VISIBILITY.cybersecurityIncident && (
+              <div className="form-group">
+                <label htmlFor="cybersecurityIncident"><strong>Has your organization experienced a cybersecurity incident in the past 24 months? (ransomware, data breach, phishing attack, etc.)</strong></label>
+                <select
+                  id="cybersecurityIncident"
+                  name="cybersecurityIncident"
+                  value={formData.cybersecurityIncident}
+                  onChange={handleChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="Yes, significant incident">Yes, significant incident</option>
+                  <option value="Yes, minor incident">Yes, minor incident</option>
+                  <option value="Suspicious activity detected">Suspicious activity detected</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+            )}
 
             <div className="form-row">
               {QUESTION_VISIBILITY.breachDetectionConfidence && (
@@ -867,21 +870,23 @@ export default function HealthCheckTab() {
             </div>
 
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="disasterRecoveryPlan"><strong>Does your company have a disaster recovery plan?</strong></label>
-                <select
-                  id="disasterRecoveryPlan"
-                  name="disasterRecoveryPlan"
-                  value={formData.disasterRecoveryPlan}
-                  onChange={handleChange}
-                >
-                  <option value="">Select...</option>
-                  <option value="Yes, tested regularly">Yes, tested regularly</option>
-                  <option value="Yes, but untested">Yes, but untested</option>
-                  <option value="In development">In development</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
+              {QUESTION_VISIBILITY.disasterRecoveryPlan && (
+                <div className="form-group">
+                  <label htmlFor="disasterRecoveryPlan"><strong>Does your company have a disaster recovery plan?</strong></label>
+                  <select
+                    id="disasterRecoveryPlan"
+                    name="disasterRecoveryPlan"
+                    value={formData.disasterRecoveryPlan}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="Yes, tested regularly">Yes, tested regularly</option>
+                    <option value="Yes, but untested">Yes, but untested</option>
+                    <option value="In development">In development</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+              )}
 
               {QUESTION_VISIBILITY.phishingExercises && (
                 <div className="form-group">
